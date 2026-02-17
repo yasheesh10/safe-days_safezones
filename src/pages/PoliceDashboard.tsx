@@ -22,6 +22,8 @@ import { ArrowLeft } from "lucide-react";
 
 interface PoliceIncident {
   id: string;
+  type: string | null;
+  description: string | null;
   latitude: number;
   longitude: number;
   city: string | null;
@@ -31,11 +33,9 @@ interface PoliceIncident {
 
   profiles: {
     full_name: string | null;
-    phone: string | null;
     email: string | null;
-  }[] | null;
+  } | null;
 }
-
 
 const PoliceDashboard = () => {
   const [incidents, setIncidents] = useState<PoliceIncident[]>([]);
@@ -48,8 +48,22 @@ const PoliceDashboard = () => {
   const loadIncidents = async () => {
   const { data, error } = await supabase
   .from("incidents")
-  .select("*")
-  .eq("status", "active")
+  .select(`
+  id,
+  type,
+  description,
+  latitude,
+  longitude,
+  city,
+  status,
+  created_at,
+  user_id,
+  profiles:profiles!incidents_user_id_fkey (
+    full_name,
+    email
+  )
+`)
+
   .order("created_at", { ascending: false });
 
 
@@ -57,7 +71,7 @@ const PoliceDashboard = () => {
     console.error("Failed to load incidents", error);
     return;
   }
-
+  console.log("INCIDENT DATA 👉", data);
   setIncidents(data || []);
 };
 
@@ -120,15 +134,24 @@ const PoliceDashboard = () => {
                 <div className="flex justify-between">
                   <div>
                     <h3 className="font-semibold text-red-600">
-                      🚨 Emergency Alert
-                    </h3>
+  🚨 {alert.type || "Emergency Alert"}
+</h3>
+
+                    <p className="text-sm font-medium text-gray-800">
+  {alert.type || "SOS"}
+</p>
+
+<p className="text-sm text-gray-600">
+  {alert.description || "No description provided"}
+</p>
+
 
                     <p className="text-sm text-gray-600">
-                      {alert.profiles?.[0]?.full_name || "Unknown User"}
+                      {alert.profiles?.full_name || "Unknown User"}
                     </p>
 
                     <p className="text-xs text-gray-500">
-                      {alert.profiles?.[0]?.email}
+                      {alert.profiles?.email}
                     </p>
                   </div>
 

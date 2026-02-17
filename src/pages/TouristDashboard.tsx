@@ -240,16 +240,14 @@ setRestaurants(restData.features);
   }
 
   // 3️⃣ Create incident
-  const { error } = await supabase.from("incidents").insert({
-    user_id: session.user.id,
-    latitude: profile.latitude,
-    longitude: profile.longitude,
-    city: profile.city || "Unknown",
-    status: "active",
-    name: profile.full_name,        
-    phone: profile.phone,           
-    email: profile.email, 
-  });
+const { error } = await supabase.from("incidents").insert({
+  user_id: session.user.id,
+  latitude: profile.latitude,
+  longitude: profile.longitude,
+  city: profile.city || "Unknown",
+  status: "active",
+});
+
 
   if (error) {
     console.error("❌ Failed to raise SOS", error);
