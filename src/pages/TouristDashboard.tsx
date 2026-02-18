@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Shield,
   AlertTriangle,
@@ -24,10 +25,11 @@ import GeofencingMonitor from "@/GeofencingMonitor";
 import { supabase } from "@/lib/supabaseClient";
 
 const TouristDashboard = () => {
+  const { t } = useTranslation();
 
   const handleShareLocation = () => {
     if (!userLocation) {
-      alert("Enable location first");
+      alert(t("enableLocationFirst"));
       return;
     }
 
@@ -97,7 +99,7 @@ const [restaurants, setRestaurants] = useState<any[]>([]);
   const requestLocationAccess = async () => {
   console.log("📍 Enable location clicked");
 if (!navigator.geolocation) {
-    alert("Geolocation not supported");
+    alert(t("geolocationNotSupported"));
     return;
   }
 
@@ -209,7 +211,7 @@ setRestaurants(restData.features);
     if (!storedBlockchainId) return;
     if (storedBlockchainId.slice(-4) === last4.toUpperCase())
  setShowId(true);
-    else alert("Last 4 digits incorrect");
+    else alert(t("last4DigitsIncorrect"));
   };
 
   // SEND SOS (INSERT TO SUPABASE)
@@ -221,7 +223,7 @@ setRestaurants(restData.features);
   const session = data.session;
 
   if (!session) {
-    alert("You are not logged in");
+    alert(t("notLoggedIn"));
     setSosActive(false);
     return;
   }
@@ -323,13 +325,10 @@ const submitIncident = async () => {
         </div>
       </div>
 
-      <h1 className="text-3xl font-bold mb-4">
-        Stay Safe Around You
+      <h1 className="text-3xl font-bold mb-4">{t("staySafeAroundYou")}
       </h1>
 
-      <p className="text-white/90 mb-8">
-        SAFE DAYS uses your live location to show nearby police stations,
-        hospitals, tourist help desks, and real-time safety alerts.
+      <p className="text-white/90 mb-8">{t("locationPopupDesc")}
       </p>
 
       <div className="space-y-3">
@@ -338,8 +337,7 @@ const submitIncident = async () => {
           size="lg"
           className="w-full bg-white text-emerald-700 hover:bg-gray-100 font-semibold"
           onClick={requestLocationAccess}
-        >
-          Enable Location
+        >{t("enableLocation")}
         </Button>
 
         <Button
@@ -347,8 +345,7 @@ const submitIncident = async () => {
           size="lg"
           className="w-full text-white/80 hover:text-white"
           onClick={() => setShowLocationPrompt(false)}
-        >
-          Maybe Later
+        >{t("maybeLater")}
         </Button>
 
       </div>
@@ -363,10 +360,10 @@ const submitIncident = async () => {
 
           <div className="flex items-center gap-2">
             <Shield className="text-green-600" />
-            <h1 className="text-xl font-bold">Tourist Safety Dashboard</h1>
+            <h1 className="text-xl font-bold">{t("touristSafetyDashboard")}</h1>
           </div>
           <Button variant="outline" onClick={() => navigate(-1)}>
-            ← Back
+            ← {t("back")}
           </Button>
         </div>
       </header>
@@ -377,39 +374,37 @@ const submitIncident = async () => {
           <Card className="h-full">
             <CardHeader>
               <CardTitle className="text-red-600 flex gap-2">
-                <AlertTriangle /> Emergency SOS
+                <AlertTriangle />{t("emergencySOS")}
               </CardTitle>
-              <CardDescription>Immediate police assistance</CardDescription>
+              <CardDescription>{t("immediatePoliceAssistance")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button
                 className="w-full bg-red-600"
                 onClick={handleSOS}
                 disabled={sosActive}
-              >
-                {sosActive ? "SOS ACTIVE..." : "SEND SOS"}
+              >{sosActive ? t("sosActive") : t("sendSOS")}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Blockchain Safety ID</CardTitle>
+              <CardTitle>{t("blockchainSafetyId")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {!showId ? (
-                <>
-                  <Label>Enter Last 4 Digits</Label>
+                <><Label>{t("enterLast4Digits")}</Label>
                   <Input value={last4} onChange={(e) => setLast4(e.target.value)} />
                   <Button onClick={handleRevealId}>
-                    <Eye className="mr-2 h-4 w-4" /> Reveal ID
+                    <Eye className="mr-2 h-4 w-4" /> {t("revealId")}
                   </Button>
                 </>
               ) : (
                 <>
                   <p className="font-mono text-green-600">{storedBlockchainId}</p>
                   <Button variant="outline" onClick={() => setShowId(false)}>
-                    <EyeOff className="mr-2 h-4 w-4" /> Hide
+                    <EyeOff className="mr-2 h-4 w-4" /> {t("hide")}
                   </Button>
                 </>
               )}
@@ -418,16 +413,16 @@ const submitIncident = async () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Account Status</CardTitle>
+              <CardTitle>{t("accountStatus")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <Badge className="bg-green-600">Verified Tourist</Badge>
+              <Badge className="bg-green-600">{t("verifiedTourist")}</Badge>
             </CardContent>
           </Card>
           {weather?.main && (
   <Card>
     <CardHeader>
-      <CardTitle>🌦 Weather Nearby</CardTitle>
+      <CardTitle>🌦 {t("weatherNearby")}</CardTitle>
       <CardDescription>{weather.name}</CardDescription>
     </CardHeader>
 <CardContent className="flex flex-wrap items-center justify-between gap-4">
@@ -441,11 +436,11 @@ const submitIncident = async () => {
 </div>
 
 <div className="text-sm min-w-[120px]">
-  💧 Humidity: {weather?.main?.humidity}%
+  💧 {t("humidity")}: {weather?.main?.humidity}%
 </div>
 
 <div className="text-sm min-w-[120px]">
-  💨 Wind: {weather?.wind?.speed} m/s
+  💨 {t("wind")}: {weather?.wind?.speed} m/s
 </div>
     </CardContent>
   </Card>
@@ -470,7 +465,7 @@ const submitIncident = async () => {
           <Card className="h-full">
             <CardHeader>
               <CardTitle className="flex gap-2">
-                <FileText /> Report Incident
+                <FileText /> {t("reportIncident")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -479,11 +474,11 @@ const submitIncident = async () => {
                 value={incidentType}
                 onChange={(e) => setIncidentType(e.target.value)}
               >
-                <option value="">Select Type</option>
-                <option>Theft</option>
-                <option>Harassment</option>
-                <option>Accident</option>
-                <option>Suspicious Activity</option>
+                <option value="">{t("selectType")}</option>
+                <option value="theft">{t("theft")}</option>
+<option value="harassment">{t("harassment")}</option>
+<option value="accident">{t("accident")}</option>
+<option value="suspiciousActivity">{t("suspiciousActivity")}</option>
               </select>
 
               <textarea
@@ -491,18 +486,18 @@ const submitIncident = async () => {
                 rows={3}
                 value={incidentDesc}
                 onChange={(e) => setIncidentDesc(e.target.value)}
-                placeholder="Describe what happened..."
+                placeholder={t("describeIncident")}
               />
 
               <Button className="w-full bg-green-600" onClick={submitIncident}>
-                Submit Report
+                {t("submitReport")}
               </Button>
             </CardContent>
           </Card>
 <Card>
             <CardHeader>
               <CardTitle className="flex gap-2">
-                <MapPin /> Nearby Safety Services
+                <MapPin /> {t("nearbySafetyServices")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
@@ -511,22 +506,19 @@ const submitIncident = async () => {
   variant="outline"
   className="w-full"
   onClick={() => openNearby("police station")}
->
-  Police Station
+>{t("policeStation")}
 </Button>
 <Button
   variant="outline"
   className="w-full"
   onClick={() => openNearby("hospital")}
->
-  Hospital
+>{t("hospital")}
 </Button>
 <Button
   variant="outline"
   className="w-full"
   onClick={() => openNearby("tourist help desk")}
->
-  Tourist Help Desk
+>{t("touristHelpDesk")}
 </Button>
 
             </CardContent>
@@ -535,18 +527,18 @@ const submitIncident = async () => {
           <Card>
   <CardHeader>
     <CardTitle className="flex gap-2">
-      <Bell /> Safety Alerts
+      <Bell /> {t("safetyAlerts")}
     </CardTitle>
   </CardHeader>
-  <CardContent>No active alerts</CardContent>
+  <CardContent>{t("noActiveAlerts")}</CardContent>
 </Card>
         </div>
  {restaurants.length > 0 && (
   <div className="lg:col-span-12">
   <Card>
     <CardHeader>
-      <CardTitle>🍽 Nearby Restaurants</CardTitle>
-      <CardDescription>Based on your current location</CardDescription>
+      <CardTitle>🍽 {t("nearbyRestaurants")}</CardTitle>
+      <CardDescription>{t("basedOnYourLocation")}</CardDescription>
     </CardHeader>
 
     <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

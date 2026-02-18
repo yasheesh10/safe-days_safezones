@@ -1,4 +1,5 @@
 // src/pages/HomePage.tsx
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
@@ -40,6 +41,7 @@ const supabase = createClient(
 const HomePage = () => {
   const { user, setUser } = useAuth();
 const navigate = useNavigate();
+const { t, i18n } = useTranslation();
 const handleLogout = async () => {
   await supabase.auth.signOut();
 
@@ -63,8 +65,7 @@ const [chatOpen, setChatOpen] = useState(false);
 >([
   {
     role: "assistant",
-    content:
-      "👋 Welcome! I’m your AI assistant for the Tourist Safety & Incident Response System.\n\nWhat would you like help with?",
+    content:t("chatWelcome"),
     type: "options",
   },
 ]);
@@ -87,31 +88,28 @@ const [input, setInput] = useState("");
     "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan-400/60";
 
   const coreFeatures = [
-    {
-      icon: AlertTriangle,
-      title: "SOS Emergency Alerts",
-      description:
-        "Instant emergency response system with GPS location tracking and automated notifications to authorities.",
-    },
-    {
-      icon: Shield,
-      title: "Blockchain Safety ID",
-      description:
-        "Secure, immutable digital identity system for tourists with encrypted personal data protection.",
-    },
-    {
-      icon: Map,
-      title: "Travel Safety Heatmaps",
-      description:
-        "Real-time incident mapping and safety zone visualization powered by AI analytics.",
-    },
-    {
-      icon: Users,
-      title: "Multi-Role Dashboards",
-      description:
-        "Specialized interfaces for tourists, police, transport authorities, and system administrators.",
-    },
-  ];
+  {
+    icon: AlertTriangle,
+    title: t("sosFeatureTitle"),
+    description: t("sosFeatureDesc"),
+  },
+  {
+    icon: Shield,
+    title: t("blockchainFeatureTitle"),
+    description: t("blockchainFeatureDesc"),
+  },
+  {
+    icon: Map,
+    title: t("heatmapFeatureTitle"),
+    description: t("heatmapFeatureDesc"),
+  },
+  {
+    icon: Users,
+    title: t("multiroleFeatureTitle"),
+    description: t("multiroleFeatureDesc"),
+  },
+];
+
 
   const culturalAddons = [
     {
@@ -181,8 +179,9 @@ const handleQuickQuery = async (text: string) => {
               <Shield className="h-5 w-5 text-cyan-300" />
             </span>
             <span className="text-lg md:text-xl font-semibold tracking-tight">
-              Tourist Safety System
-            </span>
+  {t("appName")}
+</span>
+
           </div>
 
           {/* Center: Nav */}
@@ -191,26 +190,41 @@ const handleQuickQuery = async (text: string) => {
               href="#features"
               className="text-white/70 hover:text-white transition-colors"
             >
-              Features
+              {t("features")}
             </a>
             <a
               href="#dashboards"
               className="text-white/70 hover:text-white transition-colors"
             >
-              Dashboards
+              {t("dashboards")}
             </a>
           </nav>
 
           {/* Right: Login */}
-          <div className="justify-self-end">
+          <div className="justify-self-end flex items-center gap-3">
+
+  {/* 🌍 Language Switcher */}
+  <select
+    value={i18n.language}
+    onChange={(e) => i18n.changeLanguage(e.target.value)}
+    className="text-black px-2 py-1 rounded"
+  >
+    <option value="en">EN</option>
+    <option value="hi">हिंदी</option>
+    <option value="mr">मराठी</option>
+  </select>
+
             {user ? (
   <div className="flex items-center gap-3">
-    <span className="text-white/80">Hi, {user.full_name}</span>
-    <Button
+    <span className="text-white/80">
+  {t("hiUser")}, {user.full_name}
+</span>
+
+<Button
   className="bg-red-500 hover:bg-red-600"
   onClick={handleLogout}
 >
-  Logout
+  {t("logout")}
 </Button>
 
   </div>
@@ -219,7 +233,7 @@ const handleQuickQuery = async (text: string) => {
     asChild
     className="bg-cyan-500 text-slate-900 font-semibold hover:bg-cyan-400"
   >
-    <a href="/login">Login</a>
+    <a href="/login">{t("login")}</a>
   </Button>
 )}
 
@@ -235,22 +249,23 @@ const handleQuickQuery = async (text: string) => {
             <Badge
               variant="secondary"
               className="mb-6 px-4 py-2 text-sm bg-cyan-500/15 text-cyan-300 border border-cyan-400/30"
-            >
-              AI + Blockchain Powered Safety System
+            >{t("heroBadge")}
+
             </Badge>
 
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400">
-                Tourist Safety &amp;
-              </span>
-              <br />
-              <span className="text-white">Incident Response</span>
-            </h1>
+  <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400">
+    {t("heroTitle1")}
+  </span>
+  <br />
+  <span className="text-white">{t("heroTitle2")}</span>
+</h1>
+
 
             <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
-              Ensuring every traveler’s safety through innovation inspired by our
-              people, traditions, and timeless heritage.
-            </p>
+  {t("heroSubtitle")}
+</p>
+
 
             {/* CTA row — added "Check My Safe Zone" */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -260,7 +275,7 @@ const handleQuickQuery = async (text: string) => {
                 onClick={() => navigate("/emergency-sos")}
               >
                 <AlertTriangle className="h-5 w-4 mr-0" />
-                Emergency SOS
+                {t("emergencySOS")}
               </Button>
 
               <Button
@@ -273,7 +288,7 @@ const handleQuickQuery = async (text: string) => {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                Explore Features
+                {t("exploreFeatures")}
               </Button>
 
               {/* 🔒 New: Safe Zone CTA */}
@@ -283,13 +298,13 @@ const handleQuickQuery = async (text: string) => {
                 onClick={() => navigate("/safezone")}
               >
                 <MapPin className="h-5 w-5 mr-0" />
-                Check Safe Zone
+                {t("checkSafeZone")}
               </Button>
             </div>
 
             {/* Quick stats */}
             <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
-              {["SOS Alerts", "Blockchain ID", "AI Assistant"].map(
+                {[t("sosAlerts"), t("blockchainId"), t("aiAssistant")].map(
                 (feature, idx) => (
                   <div
                     key={feature}
@@ -330,11 +345,10 @@ const handleQuickQuery = async (text: string) => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Core Safety Features
+              {t("coreFeatures")}
             </h2>
             <p className="text-white/70 max-w-2xl mx-auto">
-              Harnessing advanced technology to make travel safer across every
-              destination.
+              {t("coreFeaturesDesc")}
             </p>
           </div>
 
@@ -371,35 +385,36 @@ const handleQuickQuery = async (text: string) => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Role-Based Access Dashboards
+              {t("roleDashboards")}
             </h2>
             <p className="text-white/70">
-              Specialized interfaces for different user types
+              {t("roleDashboardsDesc")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              {
-                role: "Tourist",
-                description: "SOS, attractions, cultural content",
-                bg: "from-blue-600/15 to-blue-600/5",
-                href: "/dashboard",
-              },
-              {
-                role: "Police",
-                description: "Incident monitoring, emergency response",
-                bg: "from-red-500/15 to-red-500/5",
-                href: "/police",
-              },
-            ].map((dashboard, index) => (
+  {
+    role: t("tourist"),
+    description: t("touristDashboardDesc"),
+    bg: "from-blue-600/15 to-blue-600/5",
+    href: "/dashboard",
+  },
+  {
+    role: t("police"),
+    description: t("policeDashboardDesc"),
+    bg: "from-red-500/15 to-red-500/5",
+    href: "/police",
+  },
+]
+.map((dashboard, index) => (
               <Card
                 key={index}
                 className={`bg-gradient-to-br ${dashboard.bg} border border-white/10 backdrop-blur hover:shadow-[0_0_24px_rgba(37,99,235,0.18)] transition-all duration-300`}
               >
                 <CardHeader className="text-center">
                   <CardTitle className="text-black">
-                    {dashboard.role} Dashboard
+                    {dashboard.role} {t("dashboard")}
                   </CardTitle>
                   <CardDescription className="text-black/70">
                     {dashboard.description}
@@ -410,7 +425,7 @@ const handleQuickQuery = async (text: string) => {
                     className={`px-5 py-2 rounded-xl bg-cyan-500 text-slate-900 font-semibold hover:bg-cyan-400 shadow-lg shadow-cyan-500/25 border-0 ${focusRing}`}
                     asChild
                   >
-                    <a href={dashboard.href}>Access Dashboard</a>
+                    <a href={dashboard.href}>{t("accessDashboard")}</a>
                   </Button>
                 </CardContent>
               </Card>
@@ -428,34 +443,31 @@ const handleQuickQuery = async (text: string) => {
               <div className="flex items-center gap-3">
                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-white/5 border border-white/10">
                   <Shield className="h-4 w-4 text-cyan-300" />
-                </span>
-                <span className="text-lg font-semibold">Tourist Safety</span>
+                </span><span className="text-lg font-semibold">{t("appName")}</span>
+
               </div>
-              <p className="text-sm text-white/70">Smart Safety System</p>
-              <p className="text-sm text-white/70">
-                Ensuring every traveler’s safety through innovation inspired by
-                our people, traditions, and timeless heritage.
+              <p className="text-sm text-white/70">{t("smartSafety")}</p>
+              <p className="text-sm text-white/70">{t("heroSubtitle")}
               </p>
-              <p className="text-xs text-white/60">
-                🧡 Made with care to protect travelers everywhere
+              <p className="text-xs text-white/60">{t("madeWithLove")}
               </p>
             </div>
 
             {/* Quick Links */}
             <div className="space-y-4">
-              <h3 className="font-semibold">Quick Links</h3>
+              <h3 className="font-semibold">{t("quickLinks")}</h3>
               <div className="space-y-2 text-sm">
                 <button
                   onClick={() => navigate("/")}
                   className="block text-white/70 hover:text-white transition-colors"
                 >
-                  Home
+                  {t("home")}
                 </button>
                 <button
                   onClick={() => navigate("/login")}
                   className="block text-white/70 hover:text-white transition-colors"
                 >
-                  Login
+                  {t("login")}
                 </button>
                 <button
                   onClick={() =>
@@ -465,41 +477,42 @@ const handleQuickQuery = async (text: string) => {
                   }
                   className="block text-white/70 hover:text-white transition-colors"
                 >
-                  Features
+                  {t("features")}
                 </button>
                 <button
                   onClick={() => navigate("/about")}
                   className="block text-white/70 hover:text-white transition-colors"
                 >
-                  Safety Guidelines
+                  {t("safetyGuidelines")}
                 </button>
                 <button
                   onClick={() => navigate("/emergency-sos")}
                   className="block text-white/70 hover:text-white transition-colors"
                 >
-                  Emergency Contacts
+                  {t("emergencyContacts")}
                 </button>
               </div>
             </div>
 
             {/* Contact Us */}
             <div id="contact" className="space-y-4 ml-auto mr-100 w-fit">
-              <h3 className="font-semibold">Contact Us</h3>
+              <h3 className="font-semibold">{t("contactUs")}</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-2 text-white/70">
                   <MapPin className="h-4 w-4 text-cyan-300" />
-                  <span>Guwahati, Assam</span>
+<span>{t("locationCity")}</span>
+
                 </div>
                 <div className="flex items-center gap-2 text-white/70">
-                  <span className="text-xs">India</span>
+                  <span className="text-xs">{t("india")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/70">
                   <Phone className="h-4 w-4 text-red-400" />
-                  <span>Emergency: 112</span>
+                  <span>{t("emergencyNumber")} 112</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/70">
                   <Phone className="h-4 w-4 text-blue-400" />
-                  <span>Tourist Helpline: 1363</span>
+                  <span>{t("touristHelpline")} 1363</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/70">
                   <Mail className="h-4 w-4 text-cyan-300" />
@@ -512,28 +525,26 @@ const handleQuickQuery = async (text: string) => {
           {/* Bottom Footer */}
           <div className="border-t border-white/10 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-sm text-white/70">
-                © 2025 Safe-DAYS — Smart Tourist Safety System. All rights
-                reserved.
+              <p className="text-sm text-white/70">{t("copyright")}
               </p>
               <div className="flex gap-6 text-sm">
   <button
     onClick={() => navigate("/privacy-policy")}
     className="text-white/70 hover:text-white transition-colors"
   >
-    Privacy Policy
+    {t("privacyPolicy")}
   </button>
 
   <button
     onClick={() => navigate("/terms-of-service")}
     className="text-white/70 hover:text-white transition-colors"
   >
-    Terms of Service
+    {t("terms")}
   </button>
 </div>
             </div>
             <p className="text-xs text-white/60 mt-4 text-center">
-              Built with ❤️ and innovation to protect every traveler, everywhere.
+              {t("madeWithLove")}
             </p>
           </div>
         </div>
@@ -544,7 +555,7 @@ const handleQuickQuery = async (text: string) => {
   <div className="fixed bottom-20 right-4 w-80 h-96 bg-slate-900/90 border border-white/10 rounded-xl backdrop-blur-md shadow-[0_0_24px_rgba(0,0,0,0.4)] z-50 flex flex-col">
     {/* Header */}
     <div className="p-4 border-b border-white/10 flex items-center justify-between">
-      <h3 className="font-semibold"> AI Assistant</h3>
+      <h3 className="font-semibold"> {t("chatTitle")}</h3>
       <Button
         variant="ghost"
         size="sm"
@@ -575,8 +586,7 @@ const handleQuickQuery = async (text: string) => {
           size="sm"
           variant="secondary"
           onClick={() => handleQuickQuery("Explain what this website does")}
-        >
-          🤖 What is this website?
+        >{t("chatWhatIsSite")}
         </Button>
 
         <Button
@@ -585,8 +595,7 @@ const handleQuickQuery = async (text: string) => {
           onClick={() =>
             handleQuickQuery("How does Emergency SOS work?")
           }
-        >
-          🚨 Emergency & SOS
+        >{t("chatEmergency")}
         </Button>
 
         <Button
@@ -595,8 +604,7 @@ const handleQuickQuery = async (text: string) => {
           onClick={() =>
             handleQuickQuery("Explain Safe Zones and safety monitoring")
           }
-        >
-          🛡️ Safety & Safe Zones
+        >{t("chatSafeZones")}
         </Button>
 
         <Button
@@ -605,16 +613,14 @@ const handleQuickQuery = async (text: string) => {
           onClick={() =>
             handleQuickQuery("Explain dashboards and user roles")
           }
-        >
-          📊 Dashboards & Roles
+        >{t("chatDashboards")}
         </Button>
 
         <Button
           size="sm"
           variant="secondary"
           onClick={() => setChatOpen(false)}
-        >
-          ❓ Ask something else
+        >{t("chatAskElse")}
         </Button>
       </div>
     )}
@@ -627,7 +633,7 @@ const handleQuickQuery = async (text: string) => {
       <input
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Ask about safety, culture..."
+        placeholder={t("chatPlaceholder")}
         className="flex-1 rounded-lg bg-slate-800 px-3 py-2 text-sm outline-none text-white"
       />
       <Button
@@ -671,8 +677,7 @@ const handleQuickQuery = async (text: string) => {
   }
 }}
 
-      >
-        Send
+      >{t("chatSend")}
       </Button>
     </div>
   </div>

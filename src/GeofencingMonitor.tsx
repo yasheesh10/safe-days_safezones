@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Shield, AlertTriangle, Navigation } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +57,7 @@ interface Props {
 }
 
 const GeofencingMonitor: React.FC<Props> = ({ latitude, longitude}) => {
+  const { t } = useTranslation();
 const handleShareLocation = async () => {
   if (!location) return;
 
@@ -216,12 +218,30 @@ const handleSafeRoutes = () => {
   const [isTracking, setIsTracking] = useState(false);
   const [watchId, setWatchId] = useState<number | null>(null);
 
-  const getSafetyBadge = () => {
-    const score = getSafetyScore();
-    if (score >= 80) return { variant: 'default' as const, label: 'Safe Zone', color: 'bg-primary text-primary-foreground' };
-    if (score >= 60) return { variant: 'secondary' as const, label: 'Caution Zone', color: 'bg-accent text-accent-foreground' };
-    return { variant: 'destructive' as const, label: 'High Risk Zone', color: 'bg-destructive text-destructive-foreground' };
+const getSafetyBadge = () => {
+  const score = getSafetyScore();
+
+  if (score >= 80)
+    return {
+      variant: "default" as const,
+      label: t("safeZone"),
+      color: "bg-primary text-primary-foreground",
+    };
+
+  if (score >= 60)
+    return {
+      variant: "secondary" as const,
+      label: t("cautionZone"),
+      color: "bg-accent text-accent-foreground",
+    };
+
+  return {
+    variant: "destructive" as const,
+    label: t("highRiskZone"),
+    color: "bg-destructive text-destructive-foreground",
   };
+};
+
 
   // const sendLocationToBackend = async (
   //   latitude: number,
@@ -335,7 +355,7 @@ const handleSafeRoutes = () => {
         <CardContent className="flex items-center justify-center py-8">
           <div className="text-center">
             <Navigation className="h-8 w-8 text-primary animate-spin mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">Initializing location services...</p>
+            <p className="text-sm text-muted-foreground">{t("initializingLocation")}</p>
           </div>
         </CardContent>
       </Card>
@@ -350,41 +370,41 @@ const handleSafeRoutes = () => {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Shield className="h-5 w-5 text-primary" />
-          <span>Real-time Safety Monitor</span>
+          <span>{t("realtimeSafetyMonitor")}</span>
         </CardTitle>
-        <CardDescription>AI-powered geofencing and location safety analysis</CardDescription>
+        <CardDescription>{t("aiGeofencingDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Current Location Status */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">Location Status</span>
+            <span className="text-sm">{t("locationStatus")}</span>
           </div>
           <Badge className={locationEnabled ? 'bg-primary/20 text-primary' : 'bg-accent/20 text-accent'}>
-            {locationEnabled ? 'GPS Active' : 'Demo Mode'}
+            {locationEnabled ? t("gpsActive") : t("demoMode")}
           </Badge>
         </div>
 
         {/* Live Tracking Status */}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Live Tracking</span>
+          <span className="text-sm text-muted-foreground">{t("liveTracking")}</span>
           <Badge variant={isTracking ? "default" : "secondary"}>
-            {isTracking ? "Active" : "Off"}
+            {isTracking ? t("active") : t("off")}
           </Badge>
         </div>
 
         {/* Safety Zone Information */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Current Area Safety</span>
+            <span className="text-sm font-medium">{t("currentAreaSafety")}</span>
             <Badge className={safetyBadge.color}>
               {safetyBadge.label}
             </Badge>
           </div>
           <Progress value={safetyScore} className="h-2" />
           <div className="text-xs text-muted-foreground">
-            {currentZone ? `In ${currentZone.name}` : 'Unknown area - exercise caution'}
+            {currentZone ? `In ${currentZone.name}` : t("cautionArea")}
           </div>
         </div>
 
@@ -393,14 +413,14 @@ const handleSafeRoutes = () => {
           <div className="bg-muted/50 rounded-lg p-3 text-xs">
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <span className="text-muted-foreground">Lat:</span> {location.latitude.toFixed(4)}
+                <span className="text-muted-foreground">{t("lat")}:</span> {location.latitude.toFixed(4)}
               </div>
               <div>
-                <span className="text-muted-foreground">Lng:</span> {location.longitude.toFixed(4)}
+                <span className="text-muted-foreground">{t("lng")}:</span> {location.longitude.toFixed(4)}
               </div>
             </div>
             <div className="mt-1">
-              <span className="text-muted-foreground">Accuracy:</span> ±{Math.round(location.accuracy)}m
+              <span className="text-muted-foreground">{t("accuracy")}:</span> ±{Math.round(location.accuracy)}m
             </div>
           </div>
         )}
@@ -416,8 +436,7 @@ const handleSafeRoutes = () => {
           >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-          <Marker position={[location.latitude, location.longitude]}>
-            <Popup>You are here</Popup>
+          <Marker position={[location.latitude, location.longitude]}><Popup>You are here</Popup>
           </Marker>
 
           <Circle
@@ -440,7 +459,7 @@ const handleSafeRoutes = () => {
               startLiveTracking();
             }}
           >
-            ▶ Start Live Tracking
+            ▶ {t("startLiveTracking")}
           </Button>
         ) : (
           <Button
@@ -452,7 +471,7 @@ const handleSafeRoutes = () => {
               stopLiveTracking();
             }}
           >
-            ⏹ Stop Live Tracking
+            ⏹ {t("stopLiveTracking")}
           </Button>
         )}
       </div>
@@ -462,11 +481,11 @@ const handleSafeRoutes = () => {
           <div className="flex items-start space-x-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
             <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
             <div className="text-sm">
-              <p className="font-medium text-destructive">Safety Advisory</p>
+              <p className="font-medium text-destructive">{t("safetyAdvisory")}</p>
               <p className="text-muted-foreground">
                 {safetyScore < 50 
-                  ? 'High risk area detected. Consider moving to a safer location.'
-                  : 'Exercise caution in this area. Stay alert and avoid isolated areas.'
+                  ? t("highRiskMove")
+                  : t("cautionArea")
                 }
               </p>
             </div>
@@ -482,8 +501,7 @@ const handleSafeRoutes = () => {
     className="text-xs"
     onClick={handleShareLocation}
   >
-    <MapPin className="h-3 w-3 mr-1" />
-    Share Location
+    <MapPin className="h-3 w-3 mr-1" />{t("shareLocation")}
   </Button>
 
   <Button
@@ -492,8 +510,7 @@ const handleSafeRoutes = () => {
     className="text-xs"
     onClick={handleSafeRoutes}
   >
-    <Navigation className="h-3 w-3 mr-1" />
-    Safe Routes
+    <Navigation className="h-3 w-3 mr-1" />{t("safeRoutes")}
   </Button>
 </div>
 

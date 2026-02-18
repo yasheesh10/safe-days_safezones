@@ -1,6 +1,8 @@
 // src/pages/Login.tsx
 import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import { Shield, Eye, EyeOff, User, Car, UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,17 +20,29 @@ const supabase = createClient(
 
 type RoleId = "tourist" | "police";
 
-const roleOptions: {
+const Login = () => {
+  const { t } = useTranslation();
+  const roleOptions: {
   id: RoleId;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   description: string;
 }[] = [
-  { id: "tourist", label: "Tourist", icon: User, description: "Your trip, your safety hub" },
-  { id: "police", label: "Police", icon: Shield, description: "Monitor incidents & alerts" },
+
+  {
+    id: "tourist",
+    label: t("tourist"),
+    icon: User,
+    description: t("touristRoleDesc"),
+  },
+  {
+    id: "police",
+    label: t("police"),
+    icon: Shield,
+    description: t("policeRoleDesc"),
+  },
 ];
 
-const Login = () => {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -164,14 +178,14 @@ const { data, error } = await supabase.auth.signInWithPassword({
         >
           <Shield className="h-10 w-10 text-emerald-400 drop-shadow-md" />
           <span className="text-3xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-300 bg-clip-text text-transparent">
-            DAYS Shield
+{t("appName")}
           </span>
         </div>
 
         {/* role selection */}
         <Card className="mb-6 border-0 bg-white/10 shadow-2xl backdrop-blur-lg">
           <CardHeader className="pb-3">
-            <CardTitle className="text-center text-xl font-semibold text-white">Select Your Role</CardTitle>
+            <CardTitle className="text-center text-xl font-semibold text-white">{t("selectRole")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-3">
@@ -216,20 +230,20 @@ const { data, error } = await supabase.auth.signInWithPassword({
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white">
                   <selected.icon className="h-4 w-4" />
                 </span>
-                {selected.label} Login
+                {selected.label} {t("login")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="identifier" className="text-white/90">
-  Email or Blockchain ID
+{t("emailOrBlockchain")}
 </Label>
 
 <Input
   id="identifier"
   type="text"
-  placeholder="Enter Email or Blockchain ID"
+  placeholder={t("enterEmailOrBlockchain")}
   value={identifier}
   onChange={(e) => setIdentifier(e.target.value)}
 
@@ -240,13 +254,13 @@ const { data, error } = await supabase.auth.signInWithPassword({
 
                 <div className="space-y-1.5">
                   <Label htmlFor="password" className="text-white/90">
-                    Password
+                    {t("password")}
                   </Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
+                      placeholder={t("enterPassword")}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="h-11 border-white/30 bg-white/10 pr-10 text-white placeholder:text-gray-300 focus-visible:ring-emerald-400"
@@ -271,8 +285,8 @@ const { data, error } = await supabase.auth.signInWithPassword({
                   type="submit"
                   className="h-11 w-full bg-emerald-500 text-white transition hover:bg-emerald-600"
                   disabled={!identifier || !password || isLoading}
-                >
-                  {isLoading ? "Authenticating…" : "Access Dashboard"}
+                >{isLoading ? t("authenticating") : t("accessDashboard")}
+
                 </Button>
               </form>
 
@@ -282,8 +296,7 @@ const { data, error } = await supabase.auth.signInWithPassword({
                   variant="link"
                   className="text-emerald-400 hover:text-emerald-300"
                   onClick={() => setSelectedRole("")}
-                >
-                  ← Change role
+                >← {t("changeRole")}
                 </Button>
               </div>
             </CardContent>
@@ -292,14 +305,13 @@ const { data, error } = await supabase.auth.signInWithPassword({
 
         {/* register & back */}
 <div className="mt-6 text-center space-y-2">
-  <p className="text-sm text-gray-300">Don’t have an account?</p>
+  <p className="text-sm text-gray-300">{t("noAccount")}</p>
 
   <Button
     variant="link"
     className="text-emerald-400 hover:text-emerald-300"
     onClick={() => navigate("/register")}
-  >
-    Register now
+  >{t("registerNow")}
   </Button>
 
   <div>
@@ -307,8 +319,7 @@ const { data, error } = await supabase.auth.signInWithPassword({
       variant="link"
       className="text-gray-300 hover:text-white"
       onClick={() => navigate("/")}
-    >
-      ← Back to Home
+    >← {t("backToHome")}
     </Button>
   </div>
 </div>
