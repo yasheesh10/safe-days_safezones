@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import GeofencingMonitor from "@/GeofencingMonitor";
 import { supabase } from "@/lib/supabaseClient";
+import TrustedContacts from "@/components/TrustedContacts";
 
 const TouristDashboard = () => {
   const { t } = useTranslation();
@@ -255,13 +256,40 @@ const { error } = await supabase.from("incidents").insert({
     console.error("❌ Failed to raise SOS", error);
     alert("Failed to send SOS");
   } else {
+    await sendAlertToTrustedContacts(profile.latitude, profile.longitude);
+
     alert("🚨 SOS sent to police!");
   }
 
   setTimeout(() => setSosActive(false), 3000);
 };
 
+// 🚨 SEND ALERT TO TRUSTED CONTACTS
+const sendAlertToTrustedContacts = async (lat: number, lng: number) => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  const { data: contacts } = await supabase
+    .from("trusted_contacts")
+    .select("*")
+    .eq("user_id", user?.id);
+
+  if (!contacts || contacts.length === 0) return;
+
+  const liveLink = `https://www.google.com/maps?q=${lat},${lng}`;
+
+  await fetch("http://localhost:5000/api/send-sos-alert", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      contacts,
+      locationLink: liveLink,
+    }),
+  });
+};
   // REPORT INCIDENT
 const submitIncident = async () => {
   if (!incidentType || !incidentDesc) {
@@ -523,7 +551,7 @@ const submitIncident = async () => {
 
             </CardContent>
           </Card>
-          
+          <TrustedContacts />
           <Card>
   <CardHeader>
     <CardTitle className="flex gap-2">

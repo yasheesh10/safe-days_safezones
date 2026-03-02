@@ -14,7 +14,7 @@ import geofencingRoutes from './routes/geofencing.js';
 import blockchainRoutes from './routes/blockchain.js';
 import dashboardRoutes from './routes/dashboard.js';
 import chatRoutes from "./routes/chat.js";
-
+import sosAlertRoutes from "./routes/sosAlert.js";
 // Import middleware
 import { authenticateToken } from './middleware/auth.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -85,7 +85,7 @@ app.use('/api/cultural', culturalRoutes);
 app.use('/api/geofencing', geofencingRoutes);
 app.use('/api/blockchain', blockchainRoutes);
 app.use('/api/dashboard', authenticateToken, dashboardRoutes);
-
+app.use('/api', sosAlertRoutes);
 /* -------------------------------------------------------
    ✅ WEBSOCKET CONNECTION HANDLING
 ------------------------------------------------------- */
