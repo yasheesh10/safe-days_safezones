@@ -25,7 +25,7 @@ import GeofencingMonitor from "@/GeofencingMonitor";
 import { supabase } from "@/lib/supabaseClient";
 import TrustedContacts from "@/components/TrustedContacts";
 
-const TouristDashboard = () => {
+const TouristDashboard = ({ setGlobalNotification }: any) => {
   const { t } = useTranslation();
 
   const handleShareLocation = () => {
@@ -96,7 +96,6 @@ const TouristDashboard = () => {
   >("pending");
 const [weather, setWeather] = useState<any>(null);
 const [restaurants, setRestaurants] = useState<any[]>([]);
-
   const requestLocationAccess = async () => {
   console.log("📍 Enable location clicked");
 if (!navigator.geolocation) {
@@ -179,7 +178,53 @@ setRestaurants(restData.features);
 
   fetchWeather();
 }, [userLocation]);
+useEffect(() => {
+  const setupRealtime = async () => {
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
 
+    if (!session) return;
+
+    const userId = session.user.id;
+
+    const channel = supabase
+      .channel("incident-status-listener")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "incidents",
+        },
+        async (payload) => {
+          console.log("Realtime update received:", payload);
+
+          if (payload.new.status === "assigned") {
+            // 🔥 Confirm this incident belongs to this user
+            const { data } = await supabase
+              .from("incidents")
+              .select("user_id")
+              .eq("id", payload.new.id)
+              .single();
+
+            if (data?.user_id === userId) {
+  const message = "🚓 Officer assigned – Help arriving in 2 mins";
+
+  setGlobalNotification(message);
+  localStorage.setItem("activeNotification", message);
+}
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  setupRealtime();
+}, [setGlobalNotification]);
 
   // AUTO REQUEST LOCATION ON DASHBOARD LOAD
 // useEffect(() => {
@@ -236,11 +281,21 @@ setRestaurants(restData.features);
     .eq("id", session.user.id)
     .single();
 
-  if (profileError || !profile?.latitude || !profile?.longitude) {
-    alert("Location not available yet");
-    setSosActive(false);
-    return;
-  }
+  if (profileError) {
+  console.error(profileError);
+  alert("Profile error");
+  setSosActive(false);
+  return;
+}
+
+if (
+  profile.latitude === null ||
+  profile.longitude === null
+) {
+  alert("Location not available yet");
+  setSosActive(false);
+  return;
+}
 
   // 3️⃣ Create incident
 const { error } = await supabase.from("incidents").insert({

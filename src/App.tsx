@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,7 +31,17 @@ import SafeZone from "./pages/SafeZone"; // ✅ NEW — your live geolocation pa
 // --- React Query client ---
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  const [globalNotification, setGlobalNotification] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("activeNotification");
+    if (saved) {
+      setGlobalNotification(saved);
+    }
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light">
       <AuthProvider>
@@ -38,6 +49,21 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+          {globalNotification && (
+  <div className="bg-blue-600 text-white flex justify-between items-center px-4 py-2 font-medium">
+    <span>{globalNotification}</span>
+
+    <button
+      onClick={() => {
+        setGlobalNotification(null);
+        localStorage.removeItem("activeNotification");
+      }}
+      className="text-white text-lg font-bold hover:opacity-70"
+    >
+      ✕
+    </button>
+  </div>
+)}
             <Routes>
               {/* --- Public Routes --- */}
               <Route path="/" element={<HomePage />} />
@@ -56,13 +82,13 @@ const App = () => (
 
               {/* --- Protected Dashboards --- */}
               <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute allowedRoles={["tourist"]}>
-                    <TouristDashboard />
-                  </ProtectedRoute>
-                }
-              />
+  path="/dashboard"
+  element={
+    <ProtectedRoute allowedRoles={["tourist"]}>
+      <TouristDashboard setGlobalNotification={setGlobalNotification} />
+    </ProtectedRoute>
+  }
+/>
               <Route
                 path="/police"
                 element={
@@ -97,5 +123,5 @@ const App = () => (
     </ThemeProvider>
   </QueryClientProvider>
 );
-
+};
 export default App;
