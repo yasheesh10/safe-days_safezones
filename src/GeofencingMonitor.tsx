@@ -24,32 +24,7 @@ interface SafeZone {
 }
 
 // Predefined safe zones in North East India
-const SAFE_ZONES: SafeZone[] = [
-  {
-    name: 'Guwahati City Center',
-    center: { lat: 26.1445, lng: 91.7362 },
-    radius: 5,
-    safetyLevel: 'safe'
-  },
-  {
-    name: 'Kaziranga National Park',
-    center: { lat: 26.5775, lng: 93.1717 },
-    radius: 3,
-    safetyLevel: 'caution'
-  },
-  {
-    name: 'Shillong Central',
-    center: { lat: 25.5788, lng: 91.8933 },
-    radius: 4,
-    safetyLevel: 'safe'
-  },
-  {
-    name: 'Tawang Town',
-    center: { lat: 27.5886, lng: 91.8597 },
-    radius: 2,
-    safetyLevel: 'caution'
-  }
-];
+
 
 interface Props {
   latitude: number;
@@ -57,6 +32,7 @@ interface Props {
 }
 
 const GeofencingMonitor: React.FC<Props> = ({ latitude, longitude}) => {
+   console.log("🔥 GeofencingMonitor rendered");  // 👈 ADD THIS
   const { t } = useTranslation();
 const handleShareLocation = async () => {
   if (!location) return;
@@ -90,6 +66,7 @@ const handleSafeRoutes = () => {
   window.open(navLink, "_blank");
 };
  const [location, setLocation] = useState<Location | null>(null);
+ const [safeZones, setSafeZones] = useState<SafeZone[]>([]);
   const [currentZone, setCurrentZone] = useState<SafeZone | null>(null);
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -102,11 +79,50 @@ const handleSafeRoutes = () => {
     if (location) {
       checkSafeZones();
     }
-  }, [location]);
+  }, [location, safeZones]);
 
   useEffect(() => {
     patchLeafletIcons();
   }, []);
+
+  useEffect(() => {
+  console.log("🚀 useEffect triggered");
+  const fetchSafeZones = async () => {
+    const { data, error } = await supabase
+      .from("safe_zones")
+      .select("*");
+          console.log("Fetched from Supabase:", data);
+          console.log("📡 Supabase raw response:", { data, error });
+
+    if (error) {
+      console.error("Error fetching safe zones:", error);
+      return;
+    }
+    
+    if (!data) return;
+    const formattedZones = (data as any[]).map((zone) => {
+      const finalScore = zone.base_score + zone.dynamic_score;
+
+      let safetyLevel = "danger";
+      if (finalScore >= 80) safetyLevel = "safe";
+      else if (finalScore >= 60) safetyLevel = "caution";
+
+      return {
+        name: zone.name,
+        center: { lat: zone.lat, lng: zone.lng },
+        radius: zone.radius,
+        safetyLevel
+      };
+    });
+
+    console.log("Formatted Zones:", formattedZones);
+
+    setSafeZones(formattedZones as SafeZone[]);
+  };
+
+  fetchSafeZones();
+}, []);
+
 
 
   const initializeGeolocation = () => {
@@ -187,7 +203,7 @@ const handleSafeRoutes = () => {
     let closestZone: SafeZone | null = null;
     let minDistance = Infinity;
 
-    SAFE_ZONES.forEach(zone => {
+    safeZones.forEach(zone => {
       const distance = calculateDistance(
         location.latitude,
         location.longitude,

@@ -74,6 +74,10 @@ const TouristDashboard = ({ setGlobalNotification }: any) => {
     window.open(url, "_blank");
   };
 
+  const handleCallPolice = () => {
+  window.location.href = "tel:100";
+};
+
   const navigate = useNavigate();
 
 
@@ -274,35 +278,43 @@ useEffect(() => {
     return;
   }
 
-  // 2️⃣ Get latest location from profiles
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", session.user.id)
-    .single();
-
-  if (profileError) {
-  console.error(profileError);
-  alert("Profile error");
+if (!userLocation) {
+  alert("Enable location first");
   setSosActive(false);
   return;
 }
 
-if (
-  profile.latitude === null ||
-  profile.longitude === null
-) {
-  alert("Location not available yet");
+
+// 🔴 OFFLINE MODE
+if (!navigator.onLine) {
+  const message = `🚨 Emergency! I need help. My location: https://www.google.com/maps?q=${userLocation.latitude},${userLocation.longitude}`;
+
+  localStorage.setItem(
+    "offlineSOS",
+    JSON.stringify({
+      user_id: session.user.id,
+      latitude: userLocation.latitude,
+      longitude: userLocation.longitude,
+      time: new Date().toISOString(),
+    })
+  );
+
+  window.location.href = `sms:100?body=${encodeURIComponent(message)}`;
+
+  alert("📩 SMS opened. Please send it to contact police.");
+
   setSosActive(false);
   return;
 }
 
-  // 3️⃣ Create incident
 const { error } = await supabase.from("incidents").insert({
   user_id: session.user.id,
-  latitude: profile.latitude,
-  longitude: profile.longitude,
-  city: profile.city || "Unknown",
+  latitude: userLocation.latitude,
+  longitude: userLocation.longitude,
+  location: `https://www.google.com/maps?q=${userLocation.latitude},${userLocation.longitude}`, // 🔥 IMPORTANT
+  city: "Mumbai",
+  type: "SOS",
+  description: "Emergency SOS triggered",
   status: "active",
 });
 
@@ -311,7 +323,10 @@ const { error } = await supabase.from("incidents").insert({
     console.error("❌ Failed to raise SOS", error);
     alert("Failed to send SOS");
   } else {
-    await sendAlertToTrustedContacts(profile.latitude, profile.longitude);
+   await sendAlertToTrustedContacts(
+  userLocation.latitude,
+  userLocation.longitude
+);
 
     alert("🚨 SOS sent to police!");
   }
@@ -332,7 +347,12 @@ const sendAlertToTrustedContacts = async (lat: number, lng: number) => {
 
   if (!contacts || contacts.length === 0) return;
 
-  const liveLink = `https://www.google.com/maps?q=${lat},${lng}`;
+ if (!lat || !lng) {
+  console.error("Location missing for SOS email");
+  return;
+}
+
+const liveLink = `https://www.google.com/maps?q=${lat},${lng}`;
 
   await fetch("http://localhost:5000/api/send-sos-alert", {
     method: "POST",
@@ -367,20 +387,20 @@ const submitIncident = async () => {
     .eq("id", session.user.id)
     .single();
 
-  if (profileError || !profile?.latitude || !profile?.longitude) {
-    alert("Location not available");
-    return;
-  }
+  if (!userLocation) {
+  alert("Enable location first");
+  return;
+}
 
-  const { error } = await supabase.from("incidents").insert({
-    user_id: session.user.id,
-    type: incidentType,
-    description: incidentDesc,
-    latitude: profile.latitude,
-    longitude: profile.longitude,
-    city: profile.city || "Unknown",
-    status: "active",
-  });
+const { error } = await supabase.from("incidents").insert({
+  user_id: session.user.id,
+  type: incidentType,
+  description: incidentDesc,
+  latitude: userLocation.latitude,
+  longitude: userLocation.longitude,
+  city: "Mumbai",
+  status: "active",
+});
 
   if (error) {
     console.error(error);
@@ -468,6 +488,12 @@ const submitIncident = async () => {
                 disabled={sosActive}
               >{sosActive ? t("sosActive") : t("sendSOS")}
               </Button>
+              <Button
+  className="w-full bg-black text-white mt-2"
+  onClick={handleCallPolice}
+>
+  📞 Call Police
+</Button>
             </CardContent>
           </Card>
 

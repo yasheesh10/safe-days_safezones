@@ -18,7 +18,7 @@ router.post("/send-sos-alert", async (req, res) => {
     for (const contact of contacts) {
       await transporter.sendMail({
         from: '"SAFE DAYS SOS" <alizaskh7@gmail.com>',
-        to: contact.phone,
+        to: contact.email,
         subject: "🚨 Emergency Alert",
         html: `
           <h2>🚨 Emergency Alert</h2>

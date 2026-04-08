@@ -5,12 +5,16 @@ import {
   Marker,
   Polygon,
   Circle,
+  Popup,
   useMap,
 } from "react-leaflet";
+import { supabase } from "@/lib/supabaseClient";
 import type { LatLngTuple, Map as LeafletMap } from "leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { patchLeafletIcons } from "../leaflet-fix";
+
+
 
 patchLeafletIcons();
 
@@ -24,54 +28,177 @@ function SetMapRef({ mapRef }: { mapRef: React.MutableRefObject<LeafletMap | nul
 }
 
 // ---------- helper: point-in-polygon ----------
-function pointInPolygon(point: LatLngTuple, polygon: LatLngTuple[]): boolean {
-  const [x, y] = point;
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i];
-    const [xj, yj] = polygon[j];
-    const intersect =
-      (yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
-}
+
 
 // ---------- main component ----------
+type SafeZone = {
+  lat: number;
+  lng: number;
+  radius: number;
+  name: string;
+  base_score: number;
+  dynamic_score: number;
+};
 export default function GeoLocationMap() {
+const [safeZones, setSafeZones] = useState<SafeZone[]>([]);
+useEffect(() => {
+  const fetchSafeZones = async () => {
+    const { data, error } = await supabase
+      .from("safe_zones")
+      .select("*");
+
+    console.log("📡 Supabase zones:", data);
+
+    if (error) {
+      console.error("Error fetching zones:", error);
+      return;
+    }
+
+    //setSafeZones(data || []);
+  };
+
+  fetchSafeZones();
+}, []);
+
+const generateDynamicZones = (centerLat: number, centerLng: number) => {
+  const zones: SafeZone[] = [];
+
+  const locations = [
+    { lat: centerLat + 0.02, lng: centerLng + 0.01 },
+    { lat: centerLat - 0.015, lng: centerLng - 0.02 },
+    { lat: centerLat + 0.01, lng: centerLng - 0.015 },
+    { lat: centerLat - 0.025, lng: centerLng + 0.02 },
+    { lat: centerLat + 0.03, lng: centerLng - 0.01 },
+  ];
+
+  locations.forEach((loc, i) => {
+    const base_score = Math.floor(50 + Math.random() * 50);
+    const dynamic_score = Math.floor(Math.random() * 10);
+
+    zones.push({
+      lat: loc.lat,
+      lng: loc.lng,
+      radius: 1 + Math.random(), // 🔥 varied size
+      name: `Zone ${i + 1}`,
+      base_score,
+      dynamic_score,
+    });
+  });
+
+  setSafeZones(zones);
+};
+
   const [pos, setPos] = useState<LatLngTuple | null>(null);
   const [accuracy, setAccuracy] = useState<number | null>(null);
   const [status, setStatus] = useState<"unknown" | "inside" | "outside">("unknown");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [watching, setWatching] = useState(false);
+  const [watching, setWatching] = useState(true);
   const watchIdRef = useRef<number | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const [nearestZone, setNearestZone] = useState<SafeZone | null>(null);
+  const [nearestDistance, setNearestDistance] = useState<number | null>(null);
+  const [prevStatus, setPrevStatus] = useState<"unknown" | "inside" | "outside">("unknown");
+  
 
-  // ---------- your polygon (safe zone) ----------
-  const safeZone: LatLngTuple[] = useMemo(
-    () => [
-      [25.5796, 91.8843],
-      [25.5750, 91.8918],
-      [25.5699, 91.8870],
-      [25.5728, 91.8788],
-      [25.5773, 91.8785],
-    ],
-    []
+
+  useEffect(() => {
+  if (!watching) return;
+
+  const id = navigator.geolocation.watchPosition(
+    (p) => {
+      updatePos(
+        p.coords.latitude,
+        p.coords.longitude,
+        p.coords.accuracy ?? null
+      );
+    },
+    (err) => console.error(err),
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 10000,
+    }
   );
 
-  // compute center
-  const zoneCenter: LatLngTuple = useMemo(() => {
-    const lat = safeZone.reduce((s, p) => s + p[0], 0) / safeZone.length;
-    const lng = safeZone.reduce((s, p) => s + p[1], 0) / safeZone.length;
-    return [lat, lng];
-  }, [safeZone]);
+  return () => navigator.geolocation.clearWatch(id);
+}, [watching]);
 
-  const updatePos = (lat: number, lng: number, acc?: number | null) => {
-    const p: LatLngTuple = [lat, lng];
-    setPos(p);
-    setAccuracy(acc ?? null);
-    setStatus(pointInPolygon(p, safeZone) ? "inside" : "outside");
-  };
+  // ---------- your polygon (safe zone) ----------
+
+
+  // compute center
+  function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Earth radius in km
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+
+const updatePos = (lat: number, lng: number, acc?: number | null) => {
+  const p: LatLngTuple = [lat, lng];
+  setPos(p);
+  if (!safeZones.length) {
+  generateDynamicZones(lat, lng);
+}
+  setAccuracy(acc ?? null);
+
+  mapRef.current?.flyTo([lat, lng], 13);
+
+if (!safeZones || safeZones.length === 0) return;
+
+let inside = false;
+let minDistance = Infinity;
+let closestZone: SafeZone | null = null;
+
+safeZones.forEach(zone => {
+  const distance = calculateDistance(
+    lat,
+    lng,
+    zone.lat,
+    zone.lng
+  );
+
+  // check inside
+  if (distance <= zone.radius) {
+    inside = true;
+  }
+
+  // find nearest
+  if (distance < minDistance) {
+    minDistance = distance;
+    closestZone = zone;
+  }
+});
+
+// ✅ update nearest zone
+setNearestZone(closestZone);
+setNearestDistance(minDistance);
+
+  const newStatus = inside ? "inside" : "outside";
+
+// 🚨 trigger alert ONLY when status changes
+if (prevStatus !== newStatus) {
+  if (newStatus === "outside") {
+    alert("⚠️ Warning: You are entering an unsafe area!");
+  } else if (newStatus === "inside") {
+    alert("✅ You are now in a safe zone.");
+  }
+}
+
+setStatus(newStatus);
+setPrevStatus(newStatus);
+};
 
   const locateOnce = () => {
     if (!("geolocation" in navigator)) {
@@ -122,12 +249,21 @@ export default function GeoLocationMap() {
     };
   }, []);
 
-  const center: LatLngTuple = pos ?? zoneCenter;
+  const center: LatLngTuple = pos ?? [19.0760, 72.8777];
 
   return (
     <div className="relative w-full h-[85vh] rounded-xl overflow-hidden">
       {/* ---------- status badge ---------- */}
       <div className="absolute z-[1000] left-3 top-3">
+        {nearestZone && nearestDistance !== null && (
+  <div className="mt-2 px-3 py-2 rounded-lg bg-white text-sm shadow">
+    📍 Nearest: <strong>{nearestZone.name}</strong><br />
+    Distance:{" "}
+    {nearestDistance < 1
+      ? `${Math.round(nearestDistance * 1000)} m`
+      : `${nearestDistance.toFixed(2)} km`}
+  </div>
+)}
         {errorMsg ? (
           <div className="px-3 py-2 rounded-lg bg-rose-100 text-rose-900 text-sm shadow">
             {errorMsg}
@@ -150,8 +286,11 @@ export default function GeoLocationMap() {
               <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
             )}
           </div>
+
+          
         )}
       </div>
+
 
       {/* ---------- controls ---------- */}
       <div className="absolute z-[1000] right-3 top-3 flex gap-2">
@@ -181,10 +320,13 @@ export default function GeoLocationMap() {
       </div>
 
       {/* ---------- leaflet map ---------- */}
+      
       <MapContainer
+      
         center={center}
-        zoom={15}
+        zoom={12}
         style={{ height: "100%", width: "100%" }}
+        
       >
         <SetMapRef mapRef={mapRef} /> {/* ✅ attach map reference */}
 
@@ -193,15 +335,45 @@ export default function GeoLocationMap() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <Polygon positions={safeZone} pathOptions={{ weight: 2 }} />
+{safeZones.map((zone, index) => {
+  let color = "red";
 
-        {pos && (
-          <>
-            <Marker position={pos} />
-            {accuracy && <Circle center={pos} radius={Math.max(accuracy, 10)} />}
-          </>
-        )}
-      </MapContainer>
-    </div>
+  if (zone.base_score + zone.dynamic_score >= 80) color = "green";
+  else if (zone.base_score + zone.dynamic_score >= 60) color = "orange";
+
+  // ✅ skip invalid zones
+  if (zone.lat === undefined || zone.lng === undefined) return null;
+
+  return (
+    <Circle
+      key={index}
+      center={[zone.lat, zone.lng] as LatLngTuple}
+      radius={zone.radius * 1000}
+      pathOptions={{
+        color,
+        fillColor: color,
+        fillOpacity: 0.15,
+        weight: 2,
+      }}
+    >
+      <Popup>
+        <strong>{zone.name}</strong> <br />
+        Safety Score: {zone.base_score + zone.dynamic_score}
+      </Popup>
+    </Circle>
+  );
+})}
+{/* ✅ USER LOCATION */}
+  {pos && (
+    <>
+      <Marker position={pos} />
+      {accuracy && (
+        <Circle center={pos} radius={Math.max(accuracy, 10)} />
+      )}
+    </>
+  )}
+
+</MapContainer>
+</div>
   );
 }

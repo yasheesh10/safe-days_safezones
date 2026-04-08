@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const TrustedContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
 
   const fetchContacts = async () => {
     const {
@@ -21,22 +21,23 @@ const TrustedContacts = () => {
   };
 
   const addContact = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    if (!name || !phone) return;
+  if (!name || !email) return;
 
-    await supabase.from("trusted_contacts").insert({
-      user_id: user.id,
-      name,
-      phone,
-    });
+  await supabase.from("trusted_contacts").insert({
+    user_id: user.id,
+    name,
+    email,
+  });
 
-    setName("");
-    setPhone("");
-    fetchContacts();
-  };
+  setName("");
+  setEmail("");
+
+  fetchContacts();
+};
 
   useEffect(() => {
     fetchContacts();
@@ -58,8 +59,8 @@ const TrustedContacts = () => {
         <input
           className="border p-2 rounded w-full"
           placeholder="Email"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          value={email}
+onChange={(e) => setEmail(e.target.value)}
         />
 
         <Button onClick={addContact}>Add</Button>
@@ -67,7 +68,7 @@ const TrustedContacts = () => {
 
       {contacts.map((c) => (
         <div key={c.id} className="border p-2 rounded">
-          {c.name} — {c.phone}
+          {c.name} — {c.email}
         </div>
       ))}
     </div>

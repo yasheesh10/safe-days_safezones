@@ -31,11 +31,6 @@ interface PoliceIncident {
   status: string;
   created_at: string;
   user_id: string;
-
-  profiles: {
-    full_name: string | null;
-    email: string | null;
-  } | null;
 }
 
 const PoliceDashboard = () => {
@@ -58,21 +53,17 @@ const loadIncidents = async () => {
   const { data, error } = await supabase
     .from("incidents")
     .select(`
-      id,
-      type,
-      description,
-      latitude,
-      longitude,
-      city,
-      status,
-      created_at,
-      user_id,
-      profiles:profiles!incidents_user_id_fkey (
-        full_name,
-        email
-      )
-    `)
-    .in("status", ["active", "assigned"])
+  id,
+  type,
+  description,
+  latitude,
+  longitude,
+  city,
+  status,
+  created_at,
+  user_id
+`)
+    .ilike("city", `%${selectedCity}%`)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -130,8 +121,7 @@ const generateReport = (alert: PoliceIncident) => {
 
   addField("Incident ID:", alert.id);
   addField("Incident Type:", alert.type || "SOS");
-  addField("Victim Name:", alert.profiles?.full_name || "Unknown");
-  addField("Victim Email:", alert.profiles?.email || "N/A");
+  addField("Victim ID:", alert.user_id);
   addField("City:", alert.city || "Unknown");
   addField(
     "Coordinates:",
@@ -268,7 +258,7 @@ const assignOfficer = async (incident: PoliceIncident) => {
   onChange={(e) => setCityInput(e.target.value)}
   onKeyDown={(e) => {
     if (e.key === "Enter") {
-      setSelectedCity(cityInput);
+      setSelectedCity(cityInput.trim());
     }
   }}
 />
@@ -301,7 +291,8 @@ const assignOfficer = async (incident: PoliceIncident) => {
 
                 <div className="flex justify-between">
                   <div>
-                    <h3 className="font-semibold text-red-600">🚨 {alert.type ? t(alert.type) : t("emergencyAlert")}
+                    <h3 className="font-semibold text-red-600">
+🚨 {alert.type || "SOS"}
 </h3>
 
                     <p className="text-sm font-medium text-gray-800">{alert.type ? t(alert.type) : "SOS"}
@@ -311,14 +302,6 @@ const assignOfficer = async (incident: PoliceIncident) => {
   {alert.description || t("noDescription")}
 </p>
 
-
-                    <p className="text-sm text-gray-600">
-                      {alert.profiles?.full_name || t("unknownUser")}
-                    </p>
-
-                    <p className="text-xs text-gray-500">
-                      {alert.profiles?.email}
-                    </p>
                   </div>
 <Badge
   className={
@@ -355,12 +338,17 @@ const assignOfficer = async (incident: PoliceIncident) => {
                   <Button
                     size="sm"
                     className="bg-emerald-600 text-white"
-                    onClick={() =>
-                      window.open(
-                        `https://www.google.com/maps/dir/?api=1&destination=${alert.latitude},${alert.longitude}`,
-                        "_blank"
-                      )
-                    }
+                    onClick={() => {
+  if (!alert.latitude || !alert.longitude) {
+    alert("Location not available for this incident");
+    return;
+  }
+
+  window.open(
+    `https://www.google.com/maps/dir/?api=1&destination=${alert.latitude},${alert.longitude}`,
+    "_blank"
+  );
+}}
                   >
                     <Navigation size={16} className="mr-1" />{t("navigate")}
                   </Button>
