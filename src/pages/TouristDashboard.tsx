@@ -354,7 +354,7 @@ const sendAlertToTrustedContacts = async (lat: number, lng: number) => {
 
 const liveLink = `https://www.google.com/maps?q=${lat},${lng}`;
 
-  await fetch("http://localhost:5000/api/send-sos-alert", {
+  await fetch(`${import.meta.env.VITE_API_URL}/api/send-sos-alert`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

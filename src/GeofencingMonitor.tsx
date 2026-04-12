@@ -101,11 +101,11 @@ const handleSafeRoutes = () => {
     
     if (!data) return;
     const formattedZones = (data as any[]).map((zone) => {
-      const finalScore = zone.base_score + zone.dynamic_score;
+      const finalScore = zone.dynamic_score;
 
       let safetyLevel = "danger";
-      if (finalScore >= 80) safetyLevel = "safe";
-      else if (finalScore >= 60) safetyLevel = "caution";
+      if (finalScore >= 0.7) safetyLevel = "safe";
+      else if (finalScore >= 0.4) safetyLevel = "caution";
 
       return {
         name: zone.name,
@@ -211,7 +211,7 @@ const handleSafeRoutes = () => {
         zone.center.lng
       );
 
-      if (distance <= zone.radius && distance < minDistance) {
+      if (distance <= zone.radius / 1000 && distance < minDistance) {
         minDistance = distance;
         closestZone = zone;
       }

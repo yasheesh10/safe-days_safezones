@@ -27,20 +27,44 @@ function SetMapRef({ mapRef }: { mapRef: React.MutableRefObject<LeafletMap | nul
   return null;
 }
 
+function ZoomTracker({ onZoomChange }: { onZoomChange: (z: number) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    const handleZoom = () => onZoomChange(map.getZoom());
+    map.on("zoomend", handleZoom);
+    return () => { map.off("zoomend", handleZoom); };
+  }, [map]);
+  return null;
+}
+
 // ---------- helper: point-in-polygon ----------
 
 
 // ---------- main component ----------
 type SafeZone = {
+  id?: string;
   lat: number;
   lng: number;
   radius: number;
   name: string;
   base_score: number;
   dynamic_score: number;
+  is_tourist_landmark?: boolean;
+  zone_type?: string;
+  incident_count?: number;
 };
+
 export default function GeoLocationMap() {
 const [safeZones, setSafeZones] = useState<SafeZone[]>([]);
+const [zoom, setZoom] = useState<number>(12);
+const [banner, setBanner] = useState<{ type: "safe" | "danger" | "info"; msg: string } | null>(null);
+const lastPosRef = useRef<{ lat: number; lng: number; acc: number | null } | null>(null);
+const safeZonesRef = useRef<SafeZone[]>([]);
+const watchIdRef = useRef<number | null>(null);
+const mapRef = useRef<LeafletMap | null>(null);
+const prevStatusRef = useRef<"unknown" | "inside" | "outside" | "landmark">("unknown");
+
+// 🔹 FETCH ZONES
 useEffect(() => {
   const fetchSafeZones = async () => {
     const { data, error } = await supabase
@@ -54,50 +78,61 @@ useEffect(() => {
       return;
     }
 
-    //setSafeZones(data || []);
+    setSafeZones(data || []);
   };
 
   fetchSafeZones();
 }, []);
 
-const generateDynamicZones = (centerLat: number, centerLng: number) => {
-  const zones: SafeZone[] = [];
+useEffect(() => {
+  safeZonesRef.current = safeZones;
+  // Re-run position check now that zones are loaded
+  if (safeZones.length > 0 && lastPosRef.current) {
+    const { lat, lng, acc } = lastPosRef.current;
+    updatePos(lat, lng, acc);
+  }
+}, [safeZones]);
 
-  const locations = [
-    { lat: centerLat + 0.02, lng: centerLng + 0.01 },
-    { lat: centerLat - 0.015, lng: centerLng - 0.02 },
-    { lat: centerLat + 0.01, lng: centerLng - 0.015 },
-    { lat: centerLat - 0.025, lng: centerLng + 0.02 },
-    { lat: centerLat + 0.03, lng: centerLng - 0.01 },
-  ];
 
-  locations.forEach((loc, i) => {
-    const base_score = Math.floor(50 + Math.random() * 50);
-    const dynamic_score = Math.floor(Math.random() * 10);
+// 🔥 REALTIME (ADD THIS HERE)
+useEffect(() => {
+  const channel = supabase
+    .channel("safe-zones-live")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "safe_zones",
+      },
+      (payload) => {
+        console.log("🔥 Realtime update:", payload);
 
-    zones.push({
-      lat: loc.lat,
-      lng: loc.lng,
-      radius: 1 + Math.random(), // 🔥 varied size
-      name: `Zone ${i + 1}`,
-      base_score,
-      dynamic_score,
-    });
-  });
+        setSafeZones((prev) =>
+          prev.map((zone) =>
+            zone.id === payload.new.id
+              ? { ...zone, ...payload.new }
+              : zone
+          )
+        );
+      }
+    )
+    .subscribe();
 
-  setSafeZones(zones);
-};
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
+
 
   const [pos, setPos] = useState<LatLngTuple | null>(null);
   const [accuracy, setAccuracy] = useState<number | null>(null);
-  const [status, setStatus] = useState<"unknown" | "inside" | "outside">("unknown");
+  const [status, setStatus] = useState<"unknown" | "inside" | "outside" | "landmark">("unknown");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [watching, setWatching] = useState(true);
-  const watchIdRef = useRef<number | null>(null);
-  const mapRef = useRef<LeafletMap | null>(null);
   const [nearestZone, setNearestZone] = useState<SafeZone | null>(null);
   const [nearestDistance, setNearestDistance] = useState<number | null>(null);
-  const [prevStatus, setPrevStatus] = useState<"unknown" | "inside" | "outside">("unknown");
+ 
   
 
 
@@ -122,6 +157,7 @@ const generateDynamicZones = (centerLat: number, centerLng: number) => {
 
   return () => navigator.geolocation.clearWatch(id);
 }, [watching]);
+
 
   // ---------- your polygon (safe zone) ----------
 
@@ -148,56 +184,55 @@ const generateDynamicZones = (centerLat: number, centerLng: number) => {
 const updatePos = (lat: number, lng: number, acc?: number | null) => {
   const p: LatLngTuple = [lat, lng];
   setPos(p);
-  if (!safeZones.length) {
-  generateDynamicZones(lat, lng);
-}
   setAccuracy(acc ?? null);
+  lastPosRef.current = { lat, lng, acc: acc ?? null };
 
   mapRef.current?.flyTo([lat, lng], 13);
 
-if (!safeZones || safeZones.length === 0) return;
+if (!safeZonesRef.current || safeZonesRef.current.length === 0) return;
 
 let inside = false;
+let insideLandmark = false;
+let landmarkName = "";
 let minDistance = Infinity;
 let closestZone: SafeZone | null = null;
 
-safeZones.forEach(zone => {
-  const distance = calculateDistance(
-    lat,
-    lng,
-    zone.lat,
-    zone.lng
-  );
+safeZonesRef.current.forEach((zone) => {
+  const distanceKm = calculateDistance(lat, lng, zone.lat, zone.lng);
+  const radiusKm = zone.radius / 1000;
 
-  // check inside
-  if (distance <= zone.radius) {
-    inside = true;
+  if (distanceKm <= radiusKm) {
+    if (zone.is_tourist_landmark) {
+      insideLandmark = true;
+      landmarkName = zone.name;
+    } else {
+      inside = true;
+    }
   }
 
-  // find nearest
-  if (distance < minDistance) {
-    minDistance = distance;
+  if (distanceKm < minDistance) {
+    minDistance = distanceKm;
     closestZone = zone;
   }
 });
 
-// ✅ update nearest zone
 setNearestZone(closestZone);
 setNearestDistance(minDistance);
 
-  const newStatus = inside ? "inside" : "outside";
+const newStatus = inside ? "inside" : insideLandmark ? "landmark" : "outside";
 
-// 🚨 trigger alert ONLY when status changes
-if (prevStatus !== newStatus) {
+if (prevStatusRef.current !== "unknown" && prevStatusRef.current !== newStatus) {
   if (newStatus === "outside") {
-    alert("⚠️ Warning: You are entering an unsafe area!");
+    setBanner({ type: "danger", msg: "⚠️ You are leaving a safe zone! Stay alert." });
   } else if (newStatus === "inside") {
-    alert("✅ You are now in a safe zone.");
+    setBanner({ type: "safe", msg: "✅ You are now inside a safe zone." });
+  } else if (newStatus === "landmark") {
+    setBanner({ type: "info", msg: `📍 You are near ${landmarkName}. Stay aware of your surroundings.` });
   }
 }
 
-setStatus(newStatus);
-setPrevStatus(newStatus);
+prevStatusRef.current = newStatus;
+setStatus(newStatus as "unknown" | "inside" | "outside" | "landmark");
 };
 
   const locateOnce = () => {
@@ -268,6 +303,13 @@ setPrevStatus(newStatus);
           <div className="px-3 py-2 rounded-lg bg-rose-100 text-rose-900 text-sm shadow">
             {errorMsg}
           </div>
+          ) : status === "landmark" ? (
+  <div className="px-3 py-2 rounded-lg bg-blue-100 text-blue-900 text-sm shadow">
+    📍 Tourist Landmark Nearby{" "}
+    {accuracy && (
+      <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
+    )}
+  </div>
         ) : status === "unknown" ? (
           <div className="px-3 py-2 rounded-lg bg-slate-100 text-slate-900 text-sm shadow">
             Fetching location…
@@ -320,6 +362,8 @@ setPrevStatus(newStatus);
       </div>
 
       {/* ---------- leaflet map ---------- */}
+
+      
       
       <MapContainer
       
@@ -329,26 +373,37 @@ setPrevStatus(newStatus);
         
       >
         <SetMapRef mapRef={mapRef} /> {/* ✅ attach map reference */}
-
+         <ZoomTracker onZoomChange={setZoom} />
         <TileLayer
           attribution="&copy; OpenStreetMap"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          
         />
 
-{safeZones.map((zone, index) => {
+        
+
+{safeZones.filter((zone) => {
+  if (zone.is_tourist_landmark) return true;
+  if (zoom >= 13) return true;
+  return zone.dynamic_score <= 0.5;
+}).map((zone, index) => {
   let color = "red";
 
-  if (zone.base_score + zone.dynamic_score >= 80) color = "green";
-  else if (zone.base_score + zone.dynamic_score >= 60) color = "orange";
+  if (zone.is_tourist_landmark) {
+    color = "blue"; // landmarks always blue
+  } else {
+    const score = zone.dynamic_score;
+    if (score > 0.8) color = "green";
+    else if (score > 0.5) color = "orange";
+    else color = "red";
+  }
 
-  // ✅ skip invalid zones
-  if (zone.lat === undefined || zone.lng === undefined) return null;
 
   return (
     <Circle
       key={index}
       center={[zone.lat, zone.lng] as LatLngTuple}
-      radius={zone.radius * 1000}
+      radius={zone.radius}
       pathOptions={{
         color,
         fillColor: color,
@@ -357,8 +412,15 @@ setPrevStatus(newStatus);
       }}
     >
       <Popup>
-        <strong>{zone.name}</strong> <br />
-        Safety Score: {zone.base_score + zone.dynamic_score}
+        <strong>{zone.name}</strong><br />
+        {zone.is_tourist_landmark
+          ? "📍 Tourist Landmark"
+          : `Safety Score: ${(zone.dynamic_score * 100).toFixed(0)}%`
+        }
+        {zone.incident_count && zone.incident_count > 0
+          ? <><br />⚠️ {zone.incident_count} recent incident(s) nearby</>
+          : null
+        }
       </Popup>
     </Circle>
   );
@@ -374,6 +436,21 @@ setPrevStatus(newStatus);
   )}
 
 </MapContainer>
+ {banner && (
+        <div className={`absolute z-[1001] bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md px-4 py-3 rounded-xl shadow-lg flex justify-between items-center text-sm font-medium transition-all ${
+          banner.type === "danger" ? "bg-red-500 text-white" :
+          banner.type === "safe" ? "bg-emerald-500 text-white" :
+          "bg-blue-500 text-white"
+        }`}>
+          <span>{banner.msg}</span>
+          <button
+            onClick={() => setBanner(null)}
+            className="ml-4 text-white text-lg leading-none hover:opacity-70"
+          >
+            ✕
+          </button>
 </div>
+ )}
+ </div>
   );
 }

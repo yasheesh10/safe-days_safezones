@@ -19,8 +19,11 @@
   "author": "NE Tourist Safety Team",
   "license": "MIT",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.75.0",
+    "axios": "^1.15.0",
     "bcryptjs": "^2.4.3",
+    "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^4.22.1",

@@ -15,6 +15,7 @@ import blockchainRoutes from './routes/blockchain.js';
 import dashboardRoutes from './routes/dashboard.js';
 import chatRoutes from "./routes/chat.js";
 import sosAlertRoutes from "./routes/sosAlert.js";
+import "./crimeScraper.js";
 // Import middleware
 import { authenticateToken } from './middleware/auth.js';
 import { errorHandler } from './middleware/errorHandler.js';
