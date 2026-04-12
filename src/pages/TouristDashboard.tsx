@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import GeofencingMonitor from "@/GeofencingMonitor";
 import { supabase } from "@/lib/supabaseClient";
+// @ts-ignore
 import TrustedContacts from "@/components/TrustedContacts";
 
 const TouristDashboard = ({ setGlobalNotification }: any) => {
