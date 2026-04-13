@@ -11,15 +11,18 @@ router.post("/send-sos-alert", async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
-        user: "alizaskh7@gmail.com",
-        pass: "rknaeesssuzestzu",
+        user: "sawantyash1011@gmail.com.com",
+        pass: "oczovjyrygwpzjir",
       },
     });
 
     for (const contact of contacts) {
       await transporter.sendMail({
-        from: '"SAFE DAYS SOS" <alizaskh7@gmail.com>',
+        from: '"SAFE DAYS SOS" <sawantyash1011@gmail.com>',
         to: contact.email,
         subject: "🚨 Emergency Alert",
         html: `
