@@ -405,10 +405,10 @@ const { error } = await supabase.from("incidents").insert({
   status: "active",
 });
 
-  if (error) {
-    console.error(error);
-    alert("Failed to send incident");
-  } else {
+if (error) {
+    console.error("Incident insert error:", JSON.stringify(error));
+    alert(`Failed to send incident: ${error.message}`);
+} else {
     alert("Incident sent to police 🚨");
   }
 
