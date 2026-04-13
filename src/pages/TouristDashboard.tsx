@@ -409,14 +409,12 @@ if (error) {
     console.error("Incident insert error:", JSON.stringify(error));
     alert(`Failed to send incident: ${error.message}`);
 } else {
-    try {
-      await sendAlertToTrustedContacts(
-        userLocation.latitude,
-        userLocation.longitude
-      );
-    } catch (emailErr) {
-      console.error("Email alert failed:", emailErr);
-    }
+    // Fire and forget - don't wait for email
+    sendAlertToTrustedContacts(
+      userLocation.latitude,
+      userLocation.longitude
+    ).catch(err => console.error("Email failed:", err));
+    
     alert("Incident sent to police 🚨");
 }
 
