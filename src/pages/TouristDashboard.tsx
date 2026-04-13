@@ -26,11 +26,6 @@ import { supabase } from "@/lib/supabaseClient";
 // @ts-ignore
 import TrustedContacts from "@/components/TrustedContacts";
 
-// Wake up backend on dashboard load
-useEffect(() => {
-  fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/health`)
-    .catch(() => {}); // silently fail, just waking it up
-}, []);
 
 const TouristDashboard = ({ setGlobalNotification }: any) => {
   const { t } = useTranslation();
@@ -162,6 +157,12 @@ useEffect(() => {
     setStoredBlockchainId(u.blockchainId);
   }
 }, []);
+
+useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/health`)
+    .catch(() => {});
+}, []);
+
 useEffect(() => {
   if (!userLocation) return;
 
