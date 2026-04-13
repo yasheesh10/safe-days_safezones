@@ -6,6 +6,7 @@ import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import cron from 'node-cron';
 
+
 // Import routes
 import authRoutes from './routes/auth.js';
 import emergencyRoutes from './routes/emergency.js';
@@ -33,6 +34,8 @@ const wss = new WebSocketServer({ server });
 /* -------------------------------------------------------
    ✅ SECURITY HEADERS
 ------------------------------------------------------- */
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
 app.use(
   helmet({
     contentSecurityPolicy: {

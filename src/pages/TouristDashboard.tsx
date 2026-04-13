@@ -26,6 +26,12 @@ import { supabase } from "@/lib/supabaseClient";
 // @ts-ignore
 import TrustedContacts from "@/components/TrustedContacts";
 
+// Wake up backend on dashboard load
+useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/health`)
+    .catch(() => {}); // silently fail, just waking it up
+}, []);
+
 const TouristDashboard = ({ setGlobalNotification }: any) => {
   const { t } = useTranslation();
 
@@ -312,7 +318,7 @@ const { error } = await supabase.from("incidents").insert({
   user_id: session.user.id,
   latitude: userLocation.latitude,
   longitude: userLocation.longitude,
-  location: `https://www.google.com/maps?q=${userLocation.latitude},${userLocation.longitude}`, // 🔥 IMPORTANT
+  
   city: "Mumbai",
   type: "SOS",
   description: "Emergency SOS triggered",
