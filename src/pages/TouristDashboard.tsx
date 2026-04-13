@@ -406,13 +406,17 @@ const { error } = await supabase.from("incidents").insert({
 });
 
 if (error) {
-    console.error(error);
+    console.error("Incident insert error:", JSON.stringify(error));
     alert(`Failed to send incident: ${error.message}`);
 } else {
-    await sendAlertToTrustedContacts(
-      userLocation.latitude,
-      userLocation.longitude,
-    );
+    try {
+      await sendAlertToTrustedContacts(
+        userLocation.latitude,
+        userLocation.longitude
+      );
+    } catch (emailErr) {
+      console.error("Email alert failed:", emailErr);
+    }
     alert("Incident sent to police 🚨");
 }
 

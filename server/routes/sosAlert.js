@@ -10,12 +10,11 @@ router.post("/send-sos-alert", async (req, res) => {
 
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
       host: "smtp.gmail.com",
       port: 587,
       secure: false,
       auth: {
-        user: "sawantyash1011@gmail.com.com",
+        user: "sawantyash1011@gmail.com",
         pass: "oczovjyrygwpzjir",
       },
     });
