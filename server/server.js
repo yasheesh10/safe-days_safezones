@@ -34,8 +34,6 @@ const wss = new WebSocketServer({ server });
 /* -------------------------------------------------------
    ✅ SECURITY HEADERS
 ------------------------------------------------------- */
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
-
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -79,6 +77,9 @@ app.get('/health', (req, res) => {
     version: '1.0.0',
   });
 });
+
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
 
 /* -------------------------------------------------------
    ✅ API ROUTES
