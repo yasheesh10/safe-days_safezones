@@ -406,11 +406,15 @@ const { error } = await supabase.from("incidents").insert({
 });
 
 if (error) {
-    console.error("Incident insert error:", JSON.stringify(error));
+    console.error(error);
     alert(`Failed to send incident: ${error.message}`);
 } else {
+    await sendAlertToTrustedContacts(
+      userLocation.latitude,
+      userLocation.longitude,
+    );
     alert("Incident sent to police 🚨");
-  }
+}
 
   setIncidentType("");
   setIncidentDesc("");
