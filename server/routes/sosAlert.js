@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.post("/send-sos-alert", async (req, res) => {
   const { contacts, locationLink } = req.body;
+  console.log("🚨 SOS HIT - contacts:", JSON.stringify(contacts));
+  console.log("🚨 locationLink:", locationLink);
 
   try {
     const transporter = nodemailer.createTransport({
