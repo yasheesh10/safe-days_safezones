@@ -389,11 +389,6 @@ const submitIncident = async () => {
   }
 
   // get latest profile with location
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", session.user.id)
-    .single();
 
   if (!userLocation) {
   alert("Enable location first");
