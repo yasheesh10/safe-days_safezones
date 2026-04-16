@@ -20,18 +20,34 @@ const TrustedContacts = () => {
     setContacts(data || []);
   };
 
-  const addContact = async () => {
+const addContact = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log("USER ID:", user?.id);
+
   if (!name || !email) return;
 
-  await supabase.from("trusted_contacts").insert({
-    user_id: user.id,
+  const payload = {
+    user_id: user?.id,
     name,
     email,
-  });
+  };
+
+  console.log("INSERT PAYLOAD:", payload);
+
+  const { data, error } = await supabase
+    .from("trusted_contacts")
+    .insert(payload);
+
+  console.log("INSERT ERROR:", error);
+  console.log("INSERT DATA:", data);
+
+  if (error) {
+    alert("Insert failed: " + error.message);
+    return;
+  }
 
   setName("");
   setEmail("");
