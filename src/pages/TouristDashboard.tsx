@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Geolocation } from '@capacitor/geolocation';
 import {
   Shield,
   AlertTriangle,
@@ -102,51 +103,48 @@ const TouristDashboard = ({ setGlobalNotification }: any) => {
   >("pending");
 const [weather, setWeather] = useState<any>(null);
 const [restaurants, setRestaurants] = useState<any[]>([]);
-  const requestLocationAccess = async () => {
+
+const requestLocationAccess = async () => {
   console.log("📍 Enable location clicked");
-if (!navigator.geolocation) {
-    alert(t("geolocationNotSupported"));
-    return;
-  }
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
+  try {
+    const position = await Geolocation.getCurrentPosition();
 
-      setUserLocation({
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    setUserLocation({
+      latitude: lat,
+      longitude: lng,
+    });
+
+    setLocationPermission("granted");
+    setShowLocationPrompt(false);
+
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
+
+    if (!session) return;
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
         latitude: lat,
         longitude: lng,
-      });
+      })
+      .eq("id", session.user.id);
 
-      setLocationPermission("granted");
-      setShowLocationPrompt(false);
-
-      // 🔥 UPDATE SUPABASE PROFILE
-      const { data } = await supabase.auth.getSession();
-      const session = data.session;
-
-      if (!session) return;
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          latitude: lat,
-          longitude: lng,
-        })
-        .eq("id", session.user.id);
-
-      if (error) {
-        console.error("Failed to update location in DB:", error);
-      } else {
-        console.log("✅ Location updated in Supabase");
-      }
-    },
-    () => {
-      setLocationPermission("denied");
-      setShowLocationPrompt(false);
+    if (error) {
+      console.error("Failed to update location in DB:", error);
+    } else {
+      console.log("✅ Location updated in Supabase");
     }
-  );
+
+  } catch (error) {
+    console.error("Location error:", error);
+    setLocationPermission("denied");
+    setShowLocationPrompt(false);
+  }
 };
 
 useEffect(() => {
