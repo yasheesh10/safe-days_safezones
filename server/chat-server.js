@@ -67,22 +67,28 @@ app.post("/api/send-sos-alert", async (req, res) => {
       return res.status(400).json({ error: "No contacts provided" });
     }
 
-    for (const contact of contacts) {
-      console.log("Sending email to:", contact.email);
+for (const contact of contacts) {
+  try {
+    console.log("👉 Sending to:", contact.email);
 
-      await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: contact.email,
-        subject: "SOS Alert - SAFE DAYS 🚨",
-        html: `
-          <h2>Emergency Alert!</h2>
-          <p>User needs help.</p>
-          <p><strong>Location:</strong></p>
-          <a href="${locationLink}">${locationLink}</a>
-          <p>${message || ""}</p>
-        `,
-      });
-    }
+    const result = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "sawantyash1011@gmail.com", // 🔥 TEMP FIX
+      subject: "SOS Alert - SAFE DAYS 🚨",
+      html: `
+        <h2>Emergency Alert!</h2>
+        <p>User needs help.</p>
+        <a href="${locationLink}">${locationLink}</a>
+        <p>${message || ""}</p>
+      `,
+    });
+
+    console.log("✅ EMAIL SENT:", result);
+
+  } catch (err) {
+    console.error("❌ EMAIL ERROR:", err);
+  }
+}
 
     res.status(200).json({ success: true });
   } catch (error) {
