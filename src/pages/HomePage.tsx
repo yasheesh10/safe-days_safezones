@@ -1,8 +1,9 @@
 // src/pages/HomePage.tsx
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
+import IntroLoader from "../components/IntroLoader";
 import { createClient } from "@supabase/supabase-js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Shield,
   AlertTriangle,
@@ -39,6 +40,7 @@ const supabase = createClient(
 );
 
 const HomePage = () => {
+  const [introDone, setIntroDone] = useState(false);
   const { user, setUser } = useAuth();
 const navigate = useNavigate();
 const { t, i18n } = useTranslation();
@@ -167,6 +169,9 @@ const handleQuickQuery = async (text: string) => {
   }
 };
 
+if (!introDone) {
+  return <IntroLoader onFinish={() => setIntroDone(true)} />;
+}
   return (
     <div className="min-h-screen text-white animated-bg relative overflow-hidden">
 
@@ -246,24 +251,26 @@ const handleQuickQuery = async (text: string) => {
         <div className="container mx-auto px-4 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           {/* Left: content */}
           <div className="order-2 md:order-1">
-            <Badge
-              variant="secondary"
-              className="mb-6 px-4 py-2 text-sm bg-cyan-500/15 text-cyan-300 border border-cyan-400/30"
-            >{t("heroBadge")}
+            <div className="flex items-center gap-3 mb-4">
+  <Badge className="px-4 py-2 text-sm bg-green-500/15 text-green-300 border border-green-400/30">
+    Trusted Travel Safety System
+  </Badge>
 
-            </Badge>
-
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-  <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-400">
-    {t("heroTitle1")}
+  <span className="text-sm text-green-400 tracking-widest">
+    SAFE TRAVEL PLATFORM
   </span>
+</div>
+<h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+  <span className="text-white">Explore India</span>
   <br />
-  <span className="text-white">{t("heroTitle2")}</span>
+<span className="bg-gradient-to-r from-green-400 to-cyan-400 text-transparent bg-clip-text drop-shadow-[0_0_20px_rgba(34,211,238,0.6)]">
+  Safely.
+</span>
 </h1>
 
-
-            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
-  {t("heroSubtitle")}
+<p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
+  Real-time alerts, AI-powered safety insights, and secure travel
+  experiences across every destination.
 </p>
 
 
@@ -323,22 +330,113 @@ const handleQuickQuery = async (text: string) => {
           {/* Right: media card */}
           {/* Right: media card */}
 <div className="order-1 md:order-2">
-  <div className="relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 backdrop-blur shadow-[0_0_24px_rgba(34,211,238,0.25)] h-[360px] md:h-[460px]">
+  <div className="relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 backdrop-blur shadow-[0_0_40px_rgba(34,211,238,0.3)] h-[360px] md:h-[460px]">
 
-    <video
-      src={heroVideo}
-      autoPlay
-      muted
-      loop
-      playsInline
-      className="absolute inset-0 w-full h-full object-cover"
-    />
+  <video
+    src={heroVideo}
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover"
+  />
+
+   {/* DARK CINEMATIC OVERLAY */}
+  <div className="absolute inset-0 bg-black/60" />
+
+  {/* GLASS EFFECT */}
+  <div className="absolute inset-0 backdrop-blur-[2px]" />
+
+  {/* GRADIENT DEPTH */}
+  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
   </div>
 </div>
 
         </div>
       </section>
+
+    {/* Explore Safe Destinations */}
+<section className="py-20">
+  <div className="container mx-auto px-4">
+    
+    {/* Heading */}
+    <div className="text-center mb-14">
+      <h2 className="text-3xl md:text-4xl font-bold mb-3">
+        Explore Safe Destinations
+      </h2>
+      <p className="text-white/70 max-w-2xl mx-auto">
+        Discover cities with real-time safety insights, alerts, and travel intelligence.
+      </p>
+    </div>
+
+    {/* Cards */}
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      {[
+        {
+          name: "Mumbai",
+          safety: "High Safety",
+          color: "green",
+          img: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f",
+        },
+        {
+          name: "Goa",
+          safety: "Moderate Safety",
+          color: "yellow",
+          img: "https://images.unsplash.com/photo-1587922546307-776227941871",
+        },
+        {
+          name: "Delhi",
+          safety: "Watch Zones",
+          color: "red",
+          img: "https://images.unsplash.com/photo-1587474260584-136574528ed5",
+        },
+        {
+          name: "Northeast",
+          safety: "Safe & Scenic",
+          color: "green",
+          img: "https://images.unsplash.com/photo-1548013146-72479768bada",
+        },
+      ].map((place, index) => (
+        <div
+         key={index}
+         onClick={() => navigate("/safezone")}
+         className="group relative rounded-2xl overflow-hidden cursor-pointer 
+transform transition duration-500 
+hover:scale-105 hover:-translate-y-2 
+hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+        >
+          {/* Image */}
+          <img
+            src={place.img}
+            className="w-full h-64 object-cover group-hover:scale-110 transition duration-500"
+          />
+
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition" />
+
+          {/* Content */}
+          <div className="absolute bottom-4 left-4">
+            <h3 className="text-xl font-semibold">{place.name}</h3>
+
+            <span
+              className={`text-sm px-3 py-1 rounded-full mt-2 inline-block ${
+                place.color === "green"
+                  ? "bg-green-500/20 text-green-300"
+                  : place.color === "yellow"
+                  ? "bg-yellow-500/20 text-yellow-300"
+                  : "bg-red-500/20 text-red-300"
+              }`}
+            >
+              {place.safety}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* Core Features */}
       <section id="features" className="py-20">
@@ -356,17 +454,22 @@ const handleQuickQuery = async (text: string) => {
             {coreFeatures.map((feature, index) => (
               <Card
                 key={index}
-                className="bg-white/5 border border-white/10 backdrop-blur hover:shadow-[0_0_24px_rgba(34,211,238,0.15)] transition-all duration-300"
+className="group bg-gradient-to-br from-white/5 to-white/0 !bg-transparent backdrop-blur-xl border border-white/10 
+rounded-2xl p-6 transition-all duration-300 
+hover:scale-105 hover:border-cyan-400/40 
+hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
               >
                 <CardHeader className="text-center pb-4">
-                  <div className="mx-auto bg-cyan-500/15 border border-cyan-400/30 p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-4">
+                  <div className="mx-auto bg-cyan-500/10 border border-cyan-400/20 
+                  p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-4 
+                  group-hover:scale-110 group-hover:rotate-6 transition duration-300">
                     <feature.icon className="h-8 w-8 text-cyan-300" />
                   </div>
-                  <CardTitle className="text-lg text-white">
+                  <CardTitle className="text-lg text-white group-hover:text-cyan-300 transition">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="group-hover:translate-y-[-2px] transition">
                   <CardDescription className="text-center text-white/70">
                     {feature.description}
                   </CardDescription>
@@ -409,26 +512,41 @@ const handleQuickQuery = async (text: string) => {
 ]
 .map((dashboard, index) => (
               <Card
-                key={index}
-                className={`bg-gradient-to-br ${dashboard.bg} border border-white/10 backdrop-blur hover:shadow-[0_0_24px_rgba(37,99,235,0.18)] transition-all duration-300`}
-              >
-                <CardHeader className="text-center">
-                  <CardTitle className="text-black">
-                    {dashboard.role} {t("dashboard")}
-                  </CardTitle>
-                  <CardDescription className="text-black/70">
-                    {dashboard.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <Button
-                    className={`px-5 py-2 rounded-xl bg-cyan-500 text-slate-900 font-semibold hover:bg-cyan-400 shadow-lg shadow-cyan-500/25 border-0 ${focusRing}`}
-                    asChild
-                  >
-                    <a href={dashboard.href}>{t("accessDashboard")}</a>
-                  </Button>
-                </CardContent>
-              </Card>
+              
+  key={index}
+className="group bg-gradient-to-br from-white/5 to-white/0 !bg-transparent backdrop-blur-xl border border-white/10 
+rounded-2xl p-6 transition-all duration-300 
+hover:scale-105 hover:border-cyan-400/40 
+hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
+>
+  <CardHeader className="text-center space-y-3">
+
+    {/* ICON */}
+    <div className="mx-auto w-12 h-12 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-400/20 group-hover:scale-110 transition">
+      <Shield className="h-5 w-5 text-blue-300" />
+    </div>
+
+    {/* TITLE */}
+    <CardTitle className="text-white group-hover:text-blue-300 transition">
+      {dashboard.role}
+    </CardTitle>
+
+    {/* DESCRIPTION */}
+    <CardDescription className="text-white/70">
+      {dashboard.description}
+    </CardDescription>
+
+  </CardHeader>
+
+  <CardContent className="text-center">
+    <Button
+      className={`px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold shadow-lg hover:scale-105 hover:shadow-blue-500/50 transition ${focusRing}`}
+      asChild
+    >
+      <a href={dashboard.href}>{t("accessDashboard")}</a>
+    </Button>
+  </CardContent>
+</Card>
             ))}
           </div>
         </div>
