@@ -42,17 +42,17 @@ export default function IntroLoader({
 .add({
   targets: ".intro-image",
   opacity: [0, 1],
-  scale: [1.2, 1],
-  translateX: [40, 0],
-  duration: 900,
-  delay: anime.stagger(350),
+  scale: [1.12, 1],
+  translateX: [20, 0],
+  duration: 1800,
+  delay: anime.stagger(1200),
 })
 .add({
   targets: ".intro-image",
   opacity: [1, 0],
-  scale: [1, 1.08],
-  duration: 500,
-  delay: anime.stagger(350),
+  scale: [1, 1.03],
+  duration: 1200,
+  delay: anime.stagger(1200),
 })
       .add({
         targets: ".lock-icon",

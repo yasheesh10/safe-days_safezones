@@ -670,7 +670,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
 </motion.section>
 
 {/* Cinematic Storytelling Section */}
-<section className="relative h-screen overflow-hidden hidden lg:block">
+<section className="relative min-h-screen overflow-hidden">
 
   {/* Background Image */}
  <motion.img
@@ -696,12 +696,12 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
 
 
 {/* Main Content */}
-<div className="relative z-10 h-full">
+<div className="relative z-10 min-h-screen flex flex-col gap-8 lg:block px-6 py-20">
 
   {/* Main Heading */}
-  <div className="absolute top-20 left-20">
+  <div className="relative lg:absolute top-0 lg:top-20 left-0 lg:left-20 mb-12 lg:mb-0 text-center lg:text-left">
     <motion.h2
-      className="text-6xl md:text-8xl font-black leading-none"
+      className="text-5xl sm:text-6xl lg:text-8xl font-black leading-none tracking-tight"
       initial={{ opacity: 0, y: 100 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
@@ -723,10 +723,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
     initial={{ opacity: 0, y: 80 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 1 }}
-    className="absolute top-32 right-16 max-w-md
-    bg-white/10 backdrop-blur-xl border border-white/10
-    rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]"
-  >
+    className="relative lg:absolute top-0 lg:top-32 right-0 lg:right-16 w-full max-w-md mx-auto lg:mx-0 b-8 bg-white/10 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
     <div className="text-cyan-300 text-sm mb-3">
       01
     </div>
@@ -745,10 +742,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
     initial={{ opacity: 0, y: 80 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 1, delay: 0.2 }}
-    className="absolute bottom-32 left-20 max-w-md
-    bg-white/10 backdrop-blur-xl border border-white/10
-    rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]"
-  >
+    className="relative lg:absolute bottom-0 lg:bottom-32 left-0 lg:left-20 w-full max-w-md mx-auto lg:mx-0 mb-8 bg-white/10 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
     <div className="text-cyan-300 text-sm mb-3">
       02
     </div>
@@ -767,10 +761,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
     initial={{ opacity: 0, y: 80 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 1, delay: 0.4 }}
-    className="absolute bottom-20 right-24 max-w-md
-    bg-white/10 backdrop-blur-xl border border-white/10
-    rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]"
-  >
+    className=" relative lg:absolute bottom-0 lg:bottom-20 right-0 lg:right-24 w-full max-w-md mx-auto lg:mx-0 mb-8 bg-white/10 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
     <div className="text-cyan-300 text-sm mb-3">
       03
     </div>
