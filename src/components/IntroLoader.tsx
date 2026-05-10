@@ -10,15 +10,18 @@ import shivaji from "../assets/Shivajimaharaj.jpg";
 import taj from "../assets/Tajmahal.jpg";
 import ellora from "../assets/ellora-caves.jpg";
 
+
 const images = [
-  taj,
-  gateway,
-  elephanta,
   gangaAarti,
   goldenTemple,
   shivaji,
   ellora,
 ];
+
+images.forEach((img) => {
+  const image = new Image();
+  image.src = img;
+});
 
 export default function IntroLoader({
   onFinish,
@@ -81,20 +84,56 @@ export default function IntroLoader({
       <div className="absolute inset-0 bg-black/35" />
 
       {/* Lock Animation */}
-      <div className="relative z-10 flex flex-col items-center">
+      <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-screen px-4 text-center">
 
         <div className="lock-icon opacity-0 text-cyan-300">
           <Shield size={100} strokeWidth={1.5} />
         </div>
-    <h1 className="mt-6 text-3xl md:text-5xl font-bold tracking-[0.3em] uppercase">
-  <span className="text-white">Tourist</span>{" "}
-  <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
+<h1
+  className="
+  mt-6
+  text-3xl sm:text-4xl md:text-5xl
+  font-bold
+  uppercase
+  text-center
+  leading-tight
+  px-4
+  break-words
+  "
+>
+  <span className="text-white tracking-[0.18em] sm:tracking-[0.3em]">
+    Tourist
+  </span>
+
+  <br />
+
+  <span className="
+  bg-gradient-to-r
+  from-cyan-400
+  via-blue-400
+  to-purple-500
+  bg-clip-text
+  text-transparent
+  tracking-[0.18em] sm:tracking-[0.3em]
+  ">
     Safety
-  </span>{" "}
-  <span className="text-white">System</span>
+  </span>
+
+  <span className="text-white tracking-[0.18em] sm:tracking-[0.3em]">
+    {" "}System
+  </span>
 </h1>
 
-<p className="mt-3 text-white/60 tracking-[0.25em] text-sm uppercase">
+<p className="
+mt-3
+text-white/60
+tracking-[0.15em]
+sm:tracking-[0.25em]
+text-xs sm:text-sm
+uppercase
+text-center
+px-4
+leading-relaxed">
   Secure • Protect • Travel Safe
 </p>
 

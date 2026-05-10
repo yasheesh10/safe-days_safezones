@@ -135,7 +135,7 @@ const [input, setInput] = useState("");
   },
 ];
 
-  const particles = Array.from({ length: 20 });
+  const particles = Array.from({ length: 10 });
   const culturalAddons = [
     {
       icon: Music,
@@ -227,9 +227,9 @@ if (!introDone) {
     />
   ))}
 </div>
-<div className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" />
+<div className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[80px] animate-pulse" />
 
-<div className="absolute top-[30%] right-0 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[120px]" />
+<div className="absolute top-[30%] right-0 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[80px]" />
 
 <div className="absolute bottom-0 left-[30%] w-[450px] h-[450px] bg-purple-500/10 rounded-full blur-[140px]" />
       {/* Header Navigation */}
@@ -244,13 +244,13 @@ if (!introDone) {
       rounded-3xl
       shadow-[0_0_40px_rgba(0,0,0,0.25)]"
 >
-        <div className="container mx-auto px-6 py-4 grid grid-cols-3 items-center">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-between gap-3">
           {/* Left: Logo */}
           <div className="flex items-center gap-3 justify-self-start">
             <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-white/5 border border-white/10">
               <Shield className="h-5 w-5 text-cyan-300" />
             </span>
-            <span className="text-lg md:text-xl font-semibold tracking-tight">
+            <span className="text-sm sm:text-lg md:text-xl font-semibold tracking-tight leading-tight">
   {t("appName")}
 </span>
 
@@ -273,31 +273,72 @@ if (!introDone) {
           </nav>
 
           {/* Right: Login */}
-          <div className="justify-self-end flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-start sm:justify-end">
 
-  {/* 🌍 Language Switcher */}
-  <select
-    value={i18n.language}
-    onChange={(e) => i18n.changeLanguage(e.target.value)}
-    className="text-black px-2 py-1 rounded"
+  {user ? (
+  <div
+    className="
+    flex items-center justify-between
+    w-full sm:w-auto
+    gap-4
+    "
   >
-    <option value="en">EN</option>
-    <option value="hi">हिंदी</option>
-    <option value="mr">मराठी</option>
-  </select>
 
-            {user ? (
-  <div className="flex items-center gap-3">
-    <span className="text-white/80">
-  {t("hiUser")}, {user.full_name}
-</span>
+    {/* LEFT TEXT */}
+    <div className="flex flex-col items-start leading-tight">
 
-<Button
-  className="bg-red-500 hover:bg-red-600"
-  onClick={handleLogout}
->
-  {t("logout")}
-</Button>
+      <span
+        className="
+        text-sm sm:text-base
+        font-semibold
+        text-white
+        "
+      >
+        Tourist Safety System
+      </span>
+
+      <span
+        className="
+        text-xs
+        text-white/70
+        mt-1
+        "
+      >
+        Hi, {user.full_name}
+      </span>
+
+    </div>
+
+    {/* RIGHT CONTROLS */}
+    <div className="flex items-center gap-2">
+
+      <select
+        value={i18n.language}
+        onChange={(e) => i18n.changeLanguage(e.target.value)}
+        className="
+        text-black
+        px-2 py-1
+        rounded-lg
+        text-sm
+        "
+      >
+        <option value="en">EN</option>
+        <option value="hi">हिंदी</option>
+        <option value="mr">मराठी</option>
+      </select>
+
+      <Button
+        className="
+        bg-red-500 hover:bg-red-600
+        text-xs sm:text-sm
+        px-3 py-2
+        "
+        onClick={handleLogout}
+      >
+        {t("logout")}
+      </Button>
+
+    </div>
 
   </div>
 ) : (
@@ -316,7 +357,7 @@ if (!introDone) {
     
      {/* Hero Section */}
 <motion.section
-  className="relative min-h-screen overflow-hidden flex items-center justify-center"
+  className="relative min-h-[140svh] sm:min-h-[120svh] md:min-h-[100svh] overflow-hidden flex items-center justify-center"
   initial={{ opacity: 0 }}
   animate={{ opacity: 1 }}
   transition={{ duration: 1.2 }}
@@ -370,33 +411,31 @@ to-[#020617]
 
 
   {/* Content */}
-  <div className="
+<div className="
   absolute inset-0
   z-20
   flex flex-col
   items-center
-  justify-center
+  justify-start
+  pt-28 sm:pt-24 md:justify-center md:pt-0
   text-center
   px-6
-  ">  
+  ">
 
     {/* Badge */}
     <div className="flex items-center gap-4 mb-6">
 
       <Badge className="px-5 py-2 text-sm bg-green-500/15 text-green-300 border border-green-400/30 backdrop-blur-xl">
-        Trusted Travel Safety System
+        SAFE DAYS • AI TRAVEL SAFETY
       </Badge>
 
-      <span className="hidden md:block text-sm text-green-400 tracking-[0.3em]">
-        SAFE TRAVEL PLATFORM
-      </span>
 
     </div>
 
     {/* Heading */}
     <motion.h1
       hero-heading
-      className="text-5xl md:text-6xl xl:text-[5.5rem] font-black leading-[0.9] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
+      className="text-4xl sm:text-5xl md:text-6xl xl:text-[5.5rem] font-black leading-tight tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
       initial={{ opacity: 0, y: 80 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1.2 }}
@@ -435,7 +474,7 @@ to-[#020617]
 
     {/* Buttons */}
     <motion.div
-      className="mt-10 flex flex-col sm:flex-row gap-4 w-full justify-center"
+      className="mt-8 flex flex-col sm:flex-row gap-4 w-full justify-center"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 0.6 }}
@@ -443,7 +482,7 @@ to-[#020617]
 
       <Button
         className="
-        h-16 min-w-[220px]
+        h-16 w-full sm:min-w-[220px] sm:w-auto
         rounded-2xl
         bg-blue-600 hover:bg-blue-500
         text-lg font-semibold
@@ -458,7 +497,7 @@ to-[#020617]
       <Button
         variant="outline"
         className="
-        h-16 min-w-[220px]
+        h-16 w-full sm:min-w-[220px] sm:w-auto
         rounded-2xl
         border border-cyan-300/40
         bg-white/5
@@ -477,7 +516,7 @@ to-[#020617]
 
       <Button
         className="
-        h-16 min-w-[220px]
+        h-16 w-full sm:min-w-[220px] sm:w-auto
         rounded-2xl
         bg-black/10 hover:bg-black
         border border-white/10
@@ -496,7 +535,7 @@ to-[#020617]
 
     {/* Stats */}
     <motion.div
-      className="mt-14 flex flex-wrap justify-center gap-6"
+      className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 w-full px-4 pb-10"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 1 }}
@@ -516,7 +555,7 @@ to-[#020617]
           bg-white/[0.04]
           border border-white/10
           backdrop-blur-xl
-          min-w-[180px]
+          w-full max-w-[320px] sm:min-w-[180px]
           "
         >
 
@@ -595,14 +634,14 @@ to-[#020617]
          key={index}
          onClick={() => navigate("/safezone")}
          className="group relative rounded-2xl overflow-hidden cursor-pointer 
-transform transition duration-500 
+transition duration-700 ease-out
 hover:scale-105 hover:-translate-y-2 
 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
         >
           {/* Image */}
           <img
             src={place.img}
-            className="w-full h-64 object-cover scale-105 group-hover:scale-110 transition duration-500"
+            className="w-full h-64 object-cover scale-105 group-hover:scale-110 transition duration-700 ease-out"
           />
 
           {/* Overlay */}
@@ -631,7 +670,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
 </motion.section>
 
 {/* Cinematic Storytelling Section */}
-<section className="relative h-screen overflow-hidden">
+<section className="relative h-screen overflow-hidden hidden lg:block">
 
   {/* Background Image */}
  <motion.img
@@ -836,7 +875,7 @@ hover:shadow-[0_0_50px_rgba(34,211,238,0.25)]"
               >
                 <div className="
                 absolute inset-0 opacity-0 group-hover:opacity-100
-                transition duration-500
+                transition duration-700 ease-out
                 bg-gradient-to-br
               from-cyan-400/10
               via-transparent
@@ -940,7 +979,7 @@ hover:shadow-[0_0_50px_rgba(34,211,238,0.25)]"
 >
   <div className="
 absolute inset-0 opacity-0 group-hover:opacity-100
-transition duration-500
+transition duration-700 ease-out
 bg-gradient-to-br
 from-cyan-400/10
 via-transparent
@@ -951,7 +990,7 @@ pointer-events-none
   <CardHeader className="text-center space-y-3">
 
     {/* ICON */}
-    <div className="mx-auto w-12 h-12 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-400/20 group-hover:scale-110 transition">
+    <div className="mx-auto w-12 h-12 flex items-center justify-center rounded-xl bg-blue-500/10 border border-blue-400/20 group-hover:scale-105 transition">
       <Shield className="h-5 w-5 text-blue-300" />
     </div>
 

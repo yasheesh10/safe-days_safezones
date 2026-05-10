@@ -107,8 +107,14 @@ const [restaurants, setRestaurants] = useState<any[]>([]);
 const requestLocationAccess = async () => {
   console.log("📍 Enable location clicked");
 
-  try {
-    const position = await Geolocation.getCurrentPosition();
+try {
+
+  await Geolocation.requestPermissions();
+
+  const position = await Geolocation.getCurrentPosition({
+    enableHighAccuracy: true,
+    timeout: 15000,
+  });
 
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
