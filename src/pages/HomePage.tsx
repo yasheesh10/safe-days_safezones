@@ -2,7 +2,15 @@
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import IntroLoader from "../components/IntroLoader";
+import MagneticButton from "@/components/MagneticButton";
+import TiltCard from "@/components/TiltCard";
+import heroVideo from "@/assets/hero-video.mp4";
 import { createClient } from "@supabase/supabase-js";
+import {
+  motion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { useState, useEffect } from "react";
 import {
   Shield,
@@ -30,7 +38,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom"; // ✅ keep just one
 import CulturalModal, { CULTURAL_DATA } from "@/CulturalModal";
-import heroVideo from "@/assets/hero-video.mp4";
 import traditionalDance from "@/assets/traditional-dance.jpg";
 import northeastNature from "@/assets/northeast-nature.jpg";
 import traditionalCrafts from "@/assets/traditional-crafts.jpg";
@@ -58,6 +65,22 @@ const handleLogout = async () => {
 };
 
 const [chatOpen, setChatOpen] = useState(false);
+const { scrollY } = useScroll();
+
+const heroTextY = useTransform(scrollY, [0, 500], [0, 120]);
+const heroImageY = useTransform(scrollY, [0, 500], [0, -80]);
+const imageScale = useTransform(
+  scrollY,
+  [1200, 2200],
+  [1.15, 1]
+);
+
+const imageY = useTransform(
+  scrollY,
+  [1200, 2200],
+  [0, -120]
+);
+
   const [messages, setMessages] = useState<
   {
     role: "user" | "assistant";
@@ -112,7 +135,7 @@ const [input, setInput] = useState("");
   },
 ];
 
-
+  const particles = Array.from({ length: 20 });
   const culturalAddons = [
     {
       icon: Music,
@@ -139,6 +162,7 @@ const [input, setInput] = useState("");
         "Digital documentation of tribal art, handicrafts, and traditional practices.",
     },
   ];
+
 const handleQuickQuery = async (text: string) => {
   setMessages((prev) => [
     ...prev,
@@ -173,11 +197,54 @@ if (!introDone) {
   return <IntroLoader onFinish={() => setIntroDone(true)} />;
 }
   return (
-    <div className="min-h-screen text-white animated-bg relative overflow-hidden">
+    <div className="min-h-screen text-white shader-bg relative overflow-hidden">
+    
+      
+    {/* Ambient Glow Effects */}
+{/* Floating Particles */}
+<div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+  {particles.map((_, i) => (
+    <motion.div
+      key={i}
+      className="absolute w-1 h-1 bg-cyan-300/40 rounded-full"
 
+      initial={{
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        opacity: 0.2,
+      }}
+
+      animate={{
+        y: [null, -300],
+        opacity: [0.2, 0.8, 0.2],
+      }}
+
+      transition={{
+        duration: 10 + Math.random() * 10,
+        repeat: Infinity,
+        ease: "linear",
+      }}
+    />
+  ))}
+</div>
+<div className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" />
+
+<div className="absolute top-[30%] right-0 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[120px]" />
+
+<div className="absolute bottom-0 left-[30%] w-[450px] h-[450px] bg-purple-500/10 rounded-full blur-[140px]" />
       {/* Header Navigation */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-900/70 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-4 grid grid-cols-3 items-center">
+      <motion.header
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="sticky top-4 z-50 mx-4
+      border border-white/10
+      bg-white/5
+      backdrop-blur-xl
+      rounded-3xl
+      shadow-[0_0_40px_rgba(0,0,0,0.25)]"
+>
+        <div className="container mx-auto px-6 py-4 grid grid-cols-3 items-center">
           {/* Left: Logo */}
           <div className="flex items-center gap-3 justify-self-start">
             <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-white/5 border border-white/10">
@@ -244,120 +311,241 @@ if (!introDone) {
 
           </div>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Hero Section */}
-      <section className="relative">
-        <div className="container mx-auto px-4 py-16 md:py-24 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-          {/* Left: content */}
-          <div className="order-2 md:order-1">
-            <div className="flex items-center gap-3 mb-4">
-  <Badge className="px-4 py-2 text-sm bg-green-500/15 text-green-300 border border-green-400/30">
-    Trusted Travel Safety System
-  </Badge>
+    
+     {/* Hero Section */}
+<motion.section
+  className="relative min-h-screen overflow-hidden flex items-center justify-center"
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 1.2 }}
+>
 
-  <span className="text-sm text-green-400 tracking-widest">
-    SAFE TRAVEL PLATFORM
-  </span>
-</div>
-<h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-  <span className="text-white">Explore India</span>
-  <br />
-<span className="bg-gradient-to-r from-green-400 to-cyan-400 text-transparent bg-clip-text drop-shadow-[0_0_20px_rgba(34,211,238,0.6)]">
-  Safely.
-</span>
-</h1>
+  {/* Background Video */}
+<video
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  className="
+absolute inset-0
+w-full h-full
+object-cover
+scale-105
+z-0
+[filter:brightness(1.1)_contrast(1.2)_saturate(1.2)]
+"
+>
+  <source src={heroVideo} type="video/mp4" />
+</video>
 
-<p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
-  Real-time alerts, AI-powered safety insights, and secure travel
-  experiences across every destination.
-</p>
+<div className="
+absolute inset-0
+z-0
+bg-[radial-gradient(circle,transparent_45%,rgba(0,0,0,0.55)_100%)]
+" />
+{/* Film Grain */}
+<div className="
+absolute inset-0
+opacity-[0.03]
+mix-blend-soft-light
+bg-[url('https://www.transparenttextures.com/patterns/noise.png')]
+z-0
+" />
 
 
-            {/* CTA row — added "Check My Safe Zone" */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className={`text-lg px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 font-semibold shadow-xl shadow-blue-600/30 ring-1 ring-blue-300/30 ${focusRing} animate-none`}
-                onClick={() => navigate("/emergency-sos")}
-              >
-                <AlertTriangle className="h-5 w-4 mr-0" />
-                {t("emergencySOS")}
-              </Button>
+  {/* Dark Overlay */}
+  <div className="absolute inset-0 bg-black/15 z-0" />
 
-              <Button
-                size="lg"
-                variant="outline"
-                className={`text-lg px-6 py-4 rounded-2xl border border-cyan-300/60 text-cyan-200 bg-cyan-400/10 hover:bg-cyan-400/20 hover:text-white shadow-md shadow-cyan-500/20 ${focusRing}`}
-                onClick={() =>
-                  document
-                    .getElementById("features")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                {t("exploreFeatures")}
-              </Button>
+  <div className="
+absolute inset-0
+bg-gradient-to-b
+from-black/50
+via-black/30
+to-[#020617]
+" />
 
-              {/* 🔒 New: Safe Zone CTA */}
-              <Button
-                size="lg"
-                className={`text-lg px-8 py-4 rounded-2xl bg-black hover:bg-zinc-900 font-semibold shadow-lg shadow-black/30 ${focusRing}`}
-                onClick={() => navigate("/safezone")}
-              >
-                <MapPin className="h-5 w-5 mr-0" />
-                {t("checkSafeZone")}
-              </Button>
-            </div>
 
-            {/* Quick stats */}
-            <div className="mt-10 grid grid-cols-3 gap-4 max-w-md">
-                {[t("sosAlerts"), t("blockchainId"), t("aiAssistant")].map(
-                (feature, idx) => (
-                  <div
-                    key={feature}
-                    className="rounded-2xl p-4 text-center bg-white/5 border border-white/10 backdrop-blur"
-                  >
-                    <div className="text-2xl font-semibold text-cyan-300">
-                      {(idx + 1) * 250}+
-                    </div>
-                    <div className="text-xs text-white/70">{feature}</div>
-                  </div>
-                )
-              )}
-            </div>
+
+  {/* Content */}
+  <div className="
+  absolute inset-0
+  z-20
+  flex flex-col
+  items-center
+  justify-center
+  text-center
+  px-6
+  ">  
+
+    {/* Badge */}
+    <div className="flex items-center gap-4 mb-6">
+
+      <Badge className="px-5 py-2 text-sm bg-green-500/15 text-green-300 border border-green-400/30 backdrop-blur-xl">
+        Trusted Travel Safety System
+      </Badge>
+
+      <span className="hidden md:block text-sm text-green-400 tracking-[0.3em]">
+        SAFE TRAVEL PLATFORM
+      </span>
+
+    </div>
+
+    {/* Heading */}
+    <motion.h1
+      hero-heading
+      className="text-5xl md:text-6xl xl:text-[5.5rem] font-black leading-[0.9] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
+      initial={{ opacity: 0, y: 80 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.2 }}
+      
+    >
+
+      <span className="block text-white">
+        Explore India
+      </span>
+
+      <span className="
+      block
+      bg-gradient-to-r
+      from-green-400
+      via-cyan-300
+      to-blue-400
+      bg-clip-text
+      text-transparent
+      drop-shadow-[0_0_20px_rgba(34,211,238,0.25)]
+      ">
+        Safely.
+      </span>
+
+    </motion.h1>
+
+    {/* Subtitle */}
+    <motion.p
+      className="mt-5 text-lg md:text-2xl text-white/75 max-w-3xl leading-relaxed"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, delay: 0.4 }}
+    >
+      Real-time alerts, AI-powered safety intelligence,
+      and secure travel experiences across every destination.
+    </motion.p>
+
+    {/* Buttons */}
+    <motion.div
+      className="mt-10 flex flex-col sm:flex-row gap-4 w-full justify-center"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, delay: 0.6 }}
+    >
+
+      <Button
+        className="
+        h-16 min-w-[220px]
+        rounded-2xl
+        bg-blue-600 hover:bg-blue-500
+        text-lg font-semibold
+        shadow-[0_0_30px_rgba(37,99,235,0.45)]
+        "
+        onClick={() => navigate("/emergency-sos")}
+      >
+        <AlertTriangle className="mr-2 h-5 w-5" />
+        Emergency SOS
+      </Button>
+
+      <Button
+        variant="outline"
+        className="
+        h-16 min-w-[220px]
+        rounded-2xl
+        border border-cyan-300/40
+        bg-white/5
+        backdrop-blur-xl
+        text-lg text-cyan-200
+        hover:bg-cyan-400/10
+        "
+        onClick={() =>
+          document
+            .getElementById("features")
+            ?.scrollIntoView({ behavior: "smooth" })
+        }
+      >
+        Explore Features
+      </Button>
+
+      <Button
+        className="
+        h-16 min-w-[220px]
+        rounded-2xl
+        bg-black/10 hover:bg-black
+        border border-white/10
+        backdrop-blur-xl
+        text-lg
+        "
+        onClick={() => navigate("/safezone")}
+      >
+        
+        <MapPin className="mr-2 h-5 w-5" />
+        Check Safe Zone
+      </Button>
+
+
+    </motion.div>
+
+    {/* Stats */}
+    <motion.div
+      className="mt-14 flex flex-wrap justify-center gap-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1, delay: 1 }}
+    >
+
+      {[
+        ["250+", "SOS Alerts"],
+        ["500+", "Safe Zones"],
+        ["750+", "AI Assistant"],
+      ].map(([number, label]) => (
+
+        <div
+          key={label}
+          className="
+          px-8 py-5
+          rounded-2xl
+          bg-white/[0.04]
+          border border-white/10
+          backdrop-blur-xl
+          min-w-[180px]
+          "
+        >
+
+          <div className="text-3xl font-bold text-cyan-300">
+            {number}
           </div>
 
-          {/* Right: media card */}
-          {/* Right: media card */}
-<div className="order-1 md:order-2">
-  <div className="relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 backdrop-blur shadow-[0_0_40px_rgba(34,211,238,0.3)] h-[360px] md:h-[460px]">
-
-  <video
-    src={heroVideo}
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="absolute inset-0 w-full h-full object-cover"
-  />
-
-   {/* DARK CINEMATIC OVERLAY */}
-  <div className="absolute inset-0 bg-black/60" />
-
-  {/* GLASS EFFECT */}
-  <div className="absolute inset-0 backdrop-blur-[2px]" />
-
-  {/* GRADIENT DEPTH */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-
-  </div>
-</div>
+          <div className="text-sm text-white/60 mt-1">
+            {label}
+          </div>
 
         </div>
-      </section>
+
+      ))}
+
+    </motion.div>
+
+  </div>
+
+</motion.section>
 
     {/* Explore Safe Destinations */}
-<section className="py-20">
+<motion.section
+  className="py-20"
+  initial={{ opacity: 0, y: 100 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1 }}
+  viewport={{ once: true }}
+>
   <div className="container mx-auto px-4">
     
     {/* Heading */}
@@ -365,7 +553,7 @@ if (!introDone) {
       <h2 className="text-3xl md:text-4xl font-bold mb-3">
         Explore Safe Destinations
       </h2>
-      <p className="text-white/70 max-w-2xl mx-auto">
+      <p className="text-white/70 max-w-3xl mx-auto">
         Discover cities with real-time safety insights, alerts, and travel intelligence.
       </p>
     </div>
@@ -399,7 +587,11 @@ if (!introDone) {
           img: "https://images.unsplash.com/photo-1548013146-72479768bada",
         },
       ].map((place, index) => (
-        <div
+        <motion.div
+  initial={{ opacity: 0, y: 80 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, delay: index * 0.15 }}
+  viewport={{ once: true }}
          key={index}
          onClick={() => navigate("/safezone")}
          className="group relative rounded-2xl overflow-hidden cursor-pointer 
@@ -410,7 +602,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
           {/* Image */}
           <img
             src={place.img}
-            className="w-full h-64 object-cover group-hover:scale-110 transition duration-500"
+            className="w-full h-64 object-cover scale-105 group-hover:scale-110 transition duration-500"
           />
 
           {/* Overlay */}
@@ -432,14 +624,162 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
               {place.safety}
             </span>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   </div>
+</motion.section>
+
+{/* Cinematic Storytelling Section */}
+<section className="relative h-screen overflow-hidden">
+
+  {/* Background Image */}
+ <motion.img
+  src="https://images.unsplash.com/photo-1627894483216-2138af692e32?q=80&w=1974&auto=format&fit=crop"
+  className="absolute inset-0 w-full h-full object-cover object-center"
+  style={{
+  scale: imageScale,
+  y: imageY,
+  }}
+  />
+
+  {/* Dark Overlay */}
+ <>
+  {/* Dark cinematic layer */}
+  <div className="absolute inset-0 bg-black/60" />
+
+  {/* Blue cinematic tint */}
+  <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/20 via-transparent to-black/70" />
+
+  {/* Soft glow */}
+  <div className="absolute inset-0 backdrop-blur-[1px]" />
+</>
+
+
+{/* Main Content */}
+<div className="relative z-10 h-full">
+
+  {/* Main Heading */}
+  <div className="absolute top-20 left-20">
+    <motion.h2
+      className="text-6xl md:text-8xl font-black leading-none"
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <span className="bg-gradient-to-b from-white via-white to-cyan-300 text-transparent bg-clip-text">
+        India,
+      </span>
+
+      <br />
+
+      <span className="text-white">
+        Protected.
+      </span>
+    </motion.h2>
+  </div>
+
+  {/* Floating Card 1 */}
+  <motion.div
+    initial={{ opacity: 0, y: 80 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1 }}
+    className="absolute top-32 right-16 max-w-md
+    bg-white/10 backdrop-blur-xl border border-white/10
+    rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]"
+  >
+    <div className="text-cyan-300 text-sm mb-3">
+      01
+    </div>
+
+    <h3 className="text-3xl font-bold mb-4">
+      AI Safe Zones
+    </h3>
+
+    <p className="text-white/70 leading-relaxed">
+      Real-time intelligence helps tourists avoid unsafe areas instantly.
+    </p>
+  </motion.div>
+
+  {/* Floating Card 2 */}
+  <motion.div
+    initial={{ opacity: 0, y: 80 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1, delay: 0.2 }}
+    className="absolute bottom-32 left-20 max-w-md
+    bg-white/10 backdrop-blur-xl border border-white/10
+    rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]"
+  >
+    <div className="text-cyan-300 text-sm mb-3">
+      02
+    </div>
+
+    <h3 className="text-3xl font-bold mb-4">
+      Emergency SOS
+    </h3>
+
+    <p className="text-white/70 leading-relaxed">
+      One-tap emergency protection connected to trusted contacts and authorities.
+    </p>
+  </motion.div>
+
+  {/* Floating Card 3 */}
+  <motion.div
+    initial={{ opacity: 0, y: 80 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 1, delay: 0.4 }}
+    className="absolute bottom-20 right-24 max-w-md
+    bg-white/10 backdrop-blur-xl border border-white/10
+    rounded-[32px] p-8 shadow-[0_0_40px_rgba(0,0,0,0.4)]"
+  >
+    <div className="text-cyan-300 text-sm mb-3">
+      03
+    </div>
+
+    <h3 className="text-3xl font-bold mb-4">
+      Cultural Discovery
+    </h3>
+
+    <p className="text-white/70 leading-relaxed">
+      Explore monuments, traditions, dance, food, and authentic experiences safely.
+    </p>
+  </motion.div>
+
+</div>
+
 </section>
 
+<div className="relative h-40 overflow-hidden">
+
+  <div className="
+  absolute inset-0
+  bg-gradient-to-b
+  from-transparent
+  via-cyan-500/10
+  to-transparent
+  blur-3xl
+  " />
+
+  <div className="
+  absolute inset-0
+  bg-gradient-to-b
+  from-slate-950
+  via-transparent
+  to-slate-950
+  " />
+
+</div>
+
+
       {/* Core Features */}
-      <section id="features" className="py-20">
+      <motion.section
+  id="features"
+  className="py-20"
+  initial={{ opacity: 0, y: 100 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1 }}
+  viewport={{ once: true }}
+>
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -450,15 +790,59 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+  className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true }}
+  variants={{
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  }}
+>
             {coreFeatures.map((feature, index) => (
-              <Card
-                key={index}
-className="group bg-gradient-to-br from-white/5 to-white/0 !bg-transparent backdrop-blur-xl border border-white/10 
-rounded-2xl p-6 transition-all duration-300 
-hover:scale-105 hover:border-cyan-400/40 
-hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
+<motion.div
+  key={index}
+  
+  variants={{
+    hidden: {
+      opacity: 0,
+      y: 80,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  }}
+  transition={{
+    duration: 0.8,
+  }}
+>
+  <TiltCard>
+  <Card
+className="group relative overflow-hidden
+bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-2xl p-6
+transition-all duration-500
+hover:scale-105
+hover:border-cyan-400/40
+hover:shadow-[0_0_50px_rgba(34,211,238,0.25)]"
               >
+                <div className="
+                absolute inset-0 opacity-0 group-hover:opacity-100
+                transition duration-500
+                bg-gradient-to-br
+              from-cyan-400/10
+              via-transparent
+            to-blue-500/10
+              pointer-events-none
+              " />
                 <CardHeader className="text-center pb-4">
                   <div className="mx-auto bg-cyan-500/10 border border-cyan-400/20 
                   p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-4 
@@ -474,16 +858,46 @@ hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
                     {feature.description}
                   </CardDescription>
                 </CardContent>
-              </Card>
+                </Card>
+              </TiltCard>  
+              </motion.div>
             ))}
-          </div>
+            
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
+
+    
+<div className="relative h-40 overflow-hidden">
+
+  <div className="
+  absolute inset-0
+  bg-gradient-to-r
+  from-cyan-500/10
+  via-blue-500/10
+  to-cyan-500/10
+  blur-3xl
+  " />
+
+  <div className="
+  absolute inset-0
+  bg-gradient-to-b
+  from-transparent
+  via-slate-900/40
+  to-transparent
+  " />
+
+</div>
+
 
       {/* Dashboards Preview */}
-      <section
+      <motion.section
         id="dashboards"
         className="py-20 bg-slate-900/60 border-t border-b border-white/10"
+      initial={{ opacity: 0, y: 100 }}
+whileInView={{ opacity: 1, y: 0 }}
+transition={{ duration: 1 }}
+viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
@@ -495,7 +909,7 @@ hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
   {
     role: t("tourist"),
@@ -511,14 +925,29 @@ hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
   },
 ]
 .map((dashboard, index) => (
-              <Card
-              
-  key={index}
-className="group bg-gradient-to-br from-white/5 to-white/0 !bg-transparent backdrop-blur-xl border border-white/10 
-rounded-2xl p-6 transition-all duration-300 
-hover:scale-105 hover:border-cyan-400/40 
-hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
+<Card
+
+key={index}
+className="group relative overflow-hidden
+bg-white/5
+backdrop-blur-xl
+border border-white/10
+rounded-2xl p-6
+transition-all duration-500
+hover:scale-105
+hover:border-cyan-400/40
+hover:shadow-[0_0_50px_rgba(34,211,238,0.25)]"
 >
+  <div className="
+absolute inset-0 opacity-0 group-hover:opacity-100
+transition duration-500
+bg-gradient-to-br
+from-cyan-400/10
+via-transparent
+to-blue-500/10
+pointer-events-none
+" />
+
   <CardHeader className="text-center space-y-3">
 
     {/* ICON */}
@@ -550,7 +979,7 @@ hover:shadow-[0_10px_40px_rgba(34,211,238,0.2)]"
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer */}
       <footer className="bg-slate-950">
