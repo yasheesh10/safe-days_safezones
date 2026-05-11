@@ -599,18 +599,14 @@ if (error) {
 
         {/* MIDDLE */}
         <div className="lg:col-span-6 space-y-6">
-          <GeofencingMonitor
-  latitude={19.0760}
-  longitude={72.8777}
-/>
-
-          {locationPermission === "granted" && userLocation && (
-            <div className="bg-yellow-300 p-4 text-black text-xl">
-  TEST COMPONENT
+{userLocation && (
+  <GeofencingMonitor
+    latitude={userLocation.latitude}
+    longitude={userLocation.longitude}
+  />
+)}
 </div>
-          )}
 
-        </div>
 
         {/* RIGHT */}
 <div className="lg:col-span-3 space-y-6 self-start">
