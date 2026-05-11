@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { connectWallet } from "@/blockchain";
 import heroImage from "@/assets/hero-northeast.jpg";
 
 const supabase = createClient(
@@ -47,12 +48,101 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState<RoleId | "">("");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+const handleNormalLogin = async (
+  e: React.FormEvent
+) => {
 
+  e.preventDefault();
+
+  if (!selectedRole) return;
+
+  try {
+
+    setIsLoading(true);
+
+    const { data, error } =
+      await supabase.auth.signInWithPassword({
+        email: identifier,
+        password,
+      });
+
+    if (error || !data.user) {
+
+      toast({
+        title: "Login failed",
+        description: "Invalid email or password",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", data.user.id)
+      .single();
+
+    if (!profile) {
+
+      toast({
+        title: "Profile not found",
+        description: "User profile missing",
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    if (profile.role !== selectedRole) {
+
+      toast({
+        title: "Access denied",
+        description: `You are not registered as ${selectedRole}`,
+        variant: "destructive",
+      });
+
+      return;
+    }
+
+    setUser({
+      id: profile.id,
+      full_name: profile.full_name,
+      role: profile.role,
+    });
+
+    toast({
+      title: "Login successful",
+      description: "Welcome back!",
+    });
+
+    if (profile.role === "police") {
+      navigate("/police");
+    } else {
+      navigate("/dashboard");
+    }
+
+  } catch (error) {
+
+  console.error(error);
+
+  toast({
+    title: "Login Failed",
+    description: "Something went wrong",
+    variant: "destructive",
+  });
+
+} finally {
+
+  setIsLoading(false);
+
+}
+};
 const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
 
@@ -61,84 +151,45 @@ const handleLogin = async (e: React.FormEvent) => {
   try {
     setIsLoading(true);
 
-    const cleanIdentifier = identifier.trim().toUpperCase();
-let emailToUse = cleanIdentifier;
+   const walletAddress = await connectWallet();
 
-
-// 🧠 If user entered Blockchain ID → get email from profiles
-
-if (cleanIdentifier.startsWith("BLK-")) {
-  const storedUser = JSON.parse(localStorage.getItem("safeUser") || "null");
-
-  if (!storedUser || storedUser.blockchainId !== cleanIdentifier) {
-    toast({
-      title: "Login failed",
-      description: "Invalid Blockchain ID",
-      variant: "destructive",
-    });
-    return;
-  }
-
-  emailToUse = storedUser.email;
+if (!walletAddress) {
+  toast({
+    title: "Wallet connection failed",
+    description: "Please connect MetaMask",
+    variant: "destructive",
+  });
+  return;
 }
 
+// Find user profile using blockchain wallet
+const { data: profile, error } = await supabase
+  .from("profiles")
+  .select("*")
+  .ilike("blockchain_id", walletAddress)
+  .limit(1)
+.maybeSingle();
 
-// 🔐 Now login using the email (either original OR fetched)
-const { data, error } = await supabase.auth.signInWithPassword({
-  email: emailToUse,
-  password,
-});
+if (error || !profile) {
+  toast({
+    title: "Login failed",
+    description: "Blockchain identity not found",
+    variant: "destructive",
+  });
+  return;
+}
 
+if (profile.role !== selectedRole) {
+  toast({
+    title: "Access denied",
+    description: `You are not registered as ${selectedRole}`,
+    variant: "destructive",
+  });
+  return;
+}
 
-    if (error) {
-      toast({
-        title: "Login failed",
-        description: error.message,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const user = data.user;
-
-    if (!user) {
-      toast({
-        title: "Login failed",
-        description: "No user returned from Supabase",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // 2️⃣ Fetch profile (role check)
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-
-    if (profileError || !profile) {
-      toast({
-        title: "Profile error",
-        description: "Profile not found",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // 3️⃣ Role validation
-    if (profile.role !== selectedRole) {
-      toast({
-        title: "Access denied",
-        description: `You are not registered as ${selectedRole}`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // 4️⃣ Store in auth context (frontend use only)
     setUser({
-      id: user.id,
+      id: profile.id,
       full_name: profile.full_name,
       role: profile.role,
     });
@@ -234,58 +285,74 @@ const { data, error } = await supabase.auth.signInWithPassword({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="identifier" className="text-white/90">
-{t("emailOrBlockchain")}
-</Label>
+              <form
+  onSubmit={handleLogin}
+  className="space-y-4"
+>
+                <div className="space-y-2">
+  <Label className="text-white/90">
+    Email
+  </Label>
 
-<Input
-  id="identifier"
-  type="text"
-  placeholder={t("enterEmailOrBlockchain")}
-  value={identifier}
-  onChange={(e) => setIdentifier(e.target.value)}
+  <Input
+    type="email"
+    placeholder="Enter email"
+    value={identifier}
+    onChange={(e) =>
+      setIdentifier(e.target.value)
+    }
+    className="bg-white/5 border-white/10 text-white"
+  />
+</div>
 
-                    className="h-11 border-white/30 bg-white/10 text-white placeholder:text-gray-300 focus-visible:ring-emerald-400"
-                    required
-                  />
-                </div>
+<div className="space-y-2">
+  <Label className="text-white/90">
+    Password
+  </Label>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="password" className="text-white/90">
-                    {t("password")}
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder={t("enterPassword")}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-11 border-white/30 bg-white/10 pr-10 text-white placeholder:text-gray-300 focus-visible:ring-emerald-400"
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="absolute inset-y-0 right-0 grid w-10 place-items-center"
-                      onClick={() => setShowPassword((s) => !s)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-gray-300" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-gray-300" />
-                      )}
-                    </button>
-                  </div>
-                </div>
+  <div className="relative">
 
+    <Input
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter password"
+      value={password}
+      onChange={(e) =>
+        setPassword(e.target.value)
+      }
+      className="pr-10 bg-white/5 border-white/10 text-white"
+    />
+
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className="absolute right-0 top-0 h-full px-3"
+      onClick={() =>
+        setShowPassword(!showPassword)
+      }
+    >
+      {showPassword ? (
+        <EyeOff className="h-4 w-4 text-white/60" />
+      ) : (
+        <Eye className="h-4 w-4 text-white/60" />
+      )}
+    </Button>
+
+  </div>
+</div>
+<Button
+  type="button"
+  onClick={handleNormalLogin}
+  className="h-11 w-full bg-blue-500 text-white hover:bg-blue-600"
+  disabled={isLoading}
+>
+  {isLoading ? "Logging in..." : "Login Normally"}
+</Button>
                 <Button
                   type="submit"
                   className="h-11 w-full bg-emerald-500 text-white transition hover:bg-emerald-600"
-                  disabled={!identifier || !password || isLoading}
-                >{isLoading ? t("authenticating") : t("accessDashboard")}
+                  disabled={isLoading}
+                >{isLoading ? "Connecting Wallet..." : "Login with MetaMask"}
 
                 </Button>
               </form>

@@ -9,30 +9,25 @@ import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-northeast.jpg";
 // ⬇️ use Supabase directly (remove postJSON)
 import { supabase } from "@/lib/supabaseClient";
+import {
+  connectWallet,
+  registerOnBlockchain
+} from "@/blockchain";
 
 const Register = () => {
     // ✅ Fake Blockchain ID Generator
-  const generateFakeBlockchainId = () => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let id = "BLK-";
-    for (let i = 0; i < 16; i++) {
-      id += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return id;
-  };
-
-
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const [useBlockchain, setUseBlockchain] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+});
   const [isLoading, setIsLoading] = useState(false);
   const [generatedBlockchainId, setGeneratedBlockchainId] = useState<string | null>(null);
   const [showBlockchainPopup, setShowBlockchainPopup] = useState(false);
@@ -47,16 +42,33 @@ const Register = () => {
     const name = formData.name.trim();
     const email = formData.email.trim();
     const password = formData.password;
-    const confirm = formData.confirmPassword;
-
+const confirm = formData.confirmPassword;
     if (!name || !email || !password || !confirm) {
-      toast({
-        title: "All fields are required",
-        description: "Please fill in your name, email, and password.",
-        variant: "destructive",
-      });
-      return;
-    }
+  toast({
+    title: "All fields are required",
+    description: "Please fill in all fields.",
+    variant: "destructive",
+  });
+  return;
+}
+
+if (password.length < 6) {
+  toast({
+    title: "Weak password",
+    description: "Password must be at least 6 characters.",
+    variant: "destructive",
+  });
+  return;
+}
+
+if (password !== confirm) {
+  toast({
+    title: "Password mismatch",
+    description: "Passwords do not match.",
+    variant: "destructive",
+  });
+  return;
+}
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast({
@@ -67,31 +79,12 @@ const Register = () => {
       return;
     }
 
-    if (password.length < 6) {
-      toast({
-        title: "Weak password",
-        description: "Password must be at least 6 characters.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (password !== confirm) {
-      toast({
-        title: "Password Mismatch",
-        description: "Please ensure both passwords match.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       setIsLoading(true);
-
-      // ✅ Create user with Supabase Auth. Metadata will populate the `profiles` table via your trigger.
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+      
+const { data, error } = await supabase.auth.signUp({
+  email,
+  password,
         options: {
           data: { full_name: name, role: "tourist" },
           // If you later enable email confirmations, you can add:
@@ -123,29 +116,37 @@ if (!user) {
   throw new Error("User not created");
 }
 
-// 🔍 Check if user already has a blockchain ID
-const { data: existingProfile } = await supabase
-  .from("profiles")
-  .select("blockchain_id")
-  .eq("id", user.id)
-  .single();
+let blockchainId: string | null = null;
 
-let fakeId = existingProfile?.blockchain_id;
+if (useBlockchain) {
 
-if (!fakeId) {
-  fakeId = generateFakeBlockchainId();
-}
+  const walletAddress = await connectWallet();
+
+  if (!walletAddress) {
+    throw new Error("Wallet not connected");
+  }
+
+  blockchainId = walletAddress;
+
+  const txHash = await registerOnBlockchain(
+    name,
+    blockchainId
+  );
+
+console.log("Blockchain Transaction:", txHash);
 localStorage.setItem(
   "safeUser",
   JSON.stringify({
     email: email,
-    blockchainId: fakeId,
+    blockchainId: blockchainId,
     role: "tourist",
   })
 );
 
-setGeneratedBlockchainId(fakeId);
+setGeneratedBlockchainId(blockchainId);
 setShowBlockchainPopup(true);
+}
+
 
 // ✅ CREATE PROFILE ROW (IMPORTANT)
 const { error: profileError } = await supabase
@@ -155,7 +156,7 @@ const { error: profileError } = await supabase
     full_name: name,
     email: email,
     role: "tourist",
-    blockchain_id: fakeId,
+    blockchain_id: blockchainId,
   });
 
 if (profileError) {
@@ -250,76 +251,100 @@ if (profileError) {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
                 </div>
               </div>
+{/* Password */}
+<div className="space-y-2">
+  <Label htmlFor="password" className="text-white/90">
+    Password
+  </Label>
 
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-white/90">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Create a strong password"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange("password", e.target.value)}
-                    className="pr-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-emerald-400"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-white/60" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-white/60" />
-                    )}
-                  </Button>
-                </div>
-              </div>
+  <div className="relative">
+    <Input
+      id="password"
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter password"
+      value={formData.password}
+      onChange={(e) =>
+        handleInputChange("password", e.target.value)
+      }
+      className="pr-10 bg-white/5 border-white/10 text-white"
+      required
+    />
 
-              {/* Confirm Password */}
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-white/90">Confirm Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Re-enter password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                    className="pr-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-emerald-400"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-white/60" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-white/60" />
-                    )}
-                  </Button>
-                </div>
-              </div>
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className="absolute right-0 top-0 h-full px-3"
+      onClick={() => setShowPassword(!showPassword)}
+    >
+      {showPassword ? (
+        <EyeOff className="h-4 w-4 text-white/60" />
+      ) : (
+        <Eye className="h-4 w-4 text-white/60" />
+      )}
+    </Button>
+  </div>
+</div>
 
+{/* Confirm Password */}
+<div className="space-y-2">
+  <Label htmlFor="confirmPassword" className="text-white/90">
+    Confirm Password
+  </Label>
+
+  <div className="relative">
+    <Input
+      id="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      placeholder="Confirm password"
+      value={formData.confirmPassword}
+      onChange={(e) =>
+        handleInputChange("confirmPassword", e.target.value)
+      }
+      className="pr-10 bg-white/5 border-white/10 text-white"
+      required
+    />
+
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className="absolute right-0 top-0 h-full px-3"
+      onClick={() =>
+        setShowConfirmPassword(!showConfirmPassword)
+      }
+    >
+      {showConfirmPassword ? (
+        <EyeOff className="h-4 w-4 text-white/60" />
+      ) : (
+        <Eye className="h-4 w-4 text-white/60" />
+      )}
+    </Button>
+  </div>
+</div>
+              <div className="flex items-center gap-2">
+  <input
+    type="checkbox"
+    checked={useBlockchain}
+    onChange={(e) => setUseBlockchain(e.target.checked)}
+  />
+
+  <label className="text-white text-sm">
+    Register with Blockchain (MetaMask)
+  </label>
+</div>
               {/* Register Button */}
               <Button
                 type="submit"
                 className="w-full py-3 text-base font-medium tracking-wide bg-gradient-to-r from-emerald-500 to-sky-500 hover:from-emerald-400 hover:to-sky-400 text-white shadow-lg shadow-emerald-900/20"
                 disabled={
-                  isLoading ||
-                  !formData.name ||
-                  !formData.email ||
-                  !formData.password ||
-                  !formData.confirmPassword
-                }
+  isLoading ||
+  !formData.name ||
+  !formData.email ||
+  !formData.password ||
+  !formData.confirmPassword
+}
+
               >
                 {isLoading ? "Creating Account..." : "Register"}
               </Button>
@@ -355,7 +380,7 @@ if (profileError) {
             </p>
 
             <p className="text-sm text-gray-300 mb-4">
-              Save this ID carefully. You will use this to login.
+              This blockchain wallet address is securely linked to your SAFE DAYS identity and stored on Polygon blockchain.
             </p>
 
             <div className="flex gap-3">

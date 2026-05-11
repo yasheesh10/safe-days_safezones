@@ -1,14 +1,27 @@
 import { useTranslation } from "react-i18next";
-import { useEffect, useRef, useState } from "react";
-import { MapPin, Shield, AlertTriangle, Navigation } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { patchLeafletIcons } from "@/leaflet-fix";
+import { useEffect, useState } from "react";
+//import { MapPin, Shield, AlertTriangle, Navigation } from 'lucide-react';
+//import { Badge } from '@/components/ui/badge';
+//import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+//import { Button } from '@/components/ui/button';
+//import { Progress } from '@/components/ui/progress';
+//import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
+//import "leaflet/dist/leaflet.css";
+//import { patchLeafletIcons } from "@/leaflet-fix";
+import L from "leaflet";
 import { supabase } from "@/lib/supabaseClient";
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
 
 interface Location {
   latitude: number;
@@ -65,15 +78,16 @@ const handleSafeRoutes = () => {
 
   window.open(navLink, "_blank");
 };
- const [location, setLocation] = useState<Location | null>(null);
+const location: Location = {
+  latitude,
+  longitude,
+  accuracy: 10,
+};
  const [safeZones, setSafeZones] = useState<SafeZone[]>([]);
   const [currentZone, setCurrentZone] = useState<SafeZone | null>(null);
-  const [locationEnabled, setLocationEnabled] = useState(false);
-  const [loading, setLoading] = useState(true);
+  
 
-  useEffect(() => {
-    initializeGeolocation();
-  }, []);
+
 
   useEffect(() => {
     if (location) {
@@ -81,9 +95,6 @@ const handleSafeRoutes = () => {
     }
   }, [location, safeZones]);
 
-  useEffect(() => {
-    patchLeafletIcons();
-  }, []);
 
   useEffect(() => {
   console.log("🚀 useEffect triggered");
@@ -124,66 +135,6 @@ const handleSafeRoutes = () => {
 }, []);
 
 
-
-  const initializeGeolocation = () => {
-    if (!navigator.geolocation) {
-      setLoading(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const newLocation: Location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy
-        };
-        setLocation(newLocation);
-        setLocationEnabled(true);
-        setLoading(false);
-        
-        // Start watching position for real-time updates
-        watchPosition();
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        setLoading(false);
-        // Use demo location for Guwahati
-        setLocation({
-          latitude: 26.1445,
-          longitude: 91.7362,
-          accuracy: 10
-        });
-        setLocationEnabled(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
-      }
-    );
-  };
-
-  const watchPosition = () => {
-    navigator.geolocation.watchPosition(
-      (position) => {
-        const newLocation: Location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy
-        };
-        setLocation(newLocation);
-      },
-      (error) => {
-        console.error('Position watch error:', error);
-      },
-      {
-        enableHighAccuracy: true,
-        maximumAge: 60000,
-        timeout: 15000
-      }
-    );
-  };
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
     const R = 6371; // Earth's radius in kilometers
@@ -232,7 +183,7 @@ const handleSafeRoutes = () => {
   };
 
   const [isTracking, setIsTracking] = useState(false);
-  const [watchId, setWatchId] = useState<number | null>(null);
+  
 
 const getSafetyBadge = () => {
   const score = getSafetyScore();
@@ -295,244 +246,34 @@ const getSafetyBadge = () => {
 //   }
 // };
 
-  const startLiveTracking = async () => {
-    console.log("🟢 Start Live Tracking clicked");
-
-    const { data } = await supabase.auth.getSession();
-    const session = data.session;
-
-    if (!session) {
-      console.error("❌ No Supabase session found");
-      return;
-    }
-
-    if (!navigator.geolocation) {
-      alert("Geolocation not supported");
-      return;
-    }
-
-    const id = navigator.geolocation.watchPosition(
-      async (pos) => {
-        const newLocation = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          accuracy: pos.coords.accuracy,
-        };
-
-      setLocation(newLocation);
-
-      console.log("📍 Updating Supabase profile", newLocation);
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          latitude: newLocation.latitude,
-          longitude: newLocation.longitude,
-        })
-        .eq("id", session.user.id);
-
-        if (error) {
-          console.error("❌ Supabase update failed", error);
-        }
-      },
-
-    //   // 🔥 THIS is what was missing
-    //   sendLocationToBackend(
-    //     newLocation.latitude,
-    //     newLocation.longitude,
-    //     newLocation.accuracy
-    //   );
-    // },
-    (err) => {
-      console.error("Live tracking error:", err);
-    },
-    {
-      enableHighAccuracy: true,
-      maximumAge: 10000,
-      timeout: 15000,
-    }
-  );
-
-  setWatchId(id);
-  setIsTracking(true);
+const startLiveTracking = async () => {
+  alert("Live tracking coming soon");
 };
 
-  const stopLiveTracking = () => {
-    if (watchId !== null) {
-      navigator.geolocation.clearWatch(watchId);
-      setWatchId(null);
-    }
-    setIsTracking(false);
-  };
+ // const stopLiveTracking = () => {
+   // if (watchId !== null) {
+     // navigator.geolocation.clearWatch(watchId);
+      //setWatchId(null);
+    //}
+    //setIsTracking(false);
+  //};
 
-  if (loading) {
-    return (
-      <Card className="card-cultural border-0">
-        <CardContent className="flex items-center justify-center py-8">
-          <div className="text-center">
-            <Navigation className="h-8 w-8 text-primary animate-spin mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">{t("initializingLocation")}</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  const stopLiveTracking = () => {
+  setIsTracking(false);
+};
+
 
   const safetyBadge = getSafetyBadge();
   const safetyScore = getSafetyScore();
 
-  return (
-    <Card className="card-cultural border-0">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Shield className="h-5 w-5 text-primary" />
-          <span>{t("realtimeSafetyMonitor")}</span>
-        </CardTitle>
-        <CardDescription>{t("aiGeofencingDesc")}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Current Location Status */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{t("locationStatus")}</span>
-          </div>
-          <Badge className={locationEnabled ? 'bg-primary/20 text-primary' : 'bg-accent/20 text-accent'}>
-            {locationEnabled ? t("gpsActive") : t("demoMode")}
-          </Badge>
-        </div>
+console.log("✅ Component reached render");
 
-        {/* Live Tracking Status */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">{t("liveTracking")}</span>
-          <Badge variant={isTracking ? "default" : "secondary"}>
-            {isTracking ? t("active") : t("off")}
-          </Badge>
-        </div>
 
-        {/* Safety Zone Information */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">{t("currentAreaSafety")}</span>
-            <Badge className={safetyBadge.color}>
-              {safetyBadge.label}
-            </Badge>
-          </div>
-          <Progress value={safetyScore} className="h-2" />
-          <div className="text-xs text-muted-foreground">
-            {currentZone ? `In ${currentZone.name}` : t("cautionArea")}
-          </div>
-        </div>
-
-        {/* Location Coordinates (for debugging/demo) */}
-        {location && (
-          <div className="bg-muted/50 rounded-lg p-3 text-xs">
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <span className="text-muted-foreground">{t("lat")}:</span> {location.latitude.toFixed(4)}
-              </div>
-              <div>
-                <span className="text-muted-foreground">{t("lng")}:</span> {location.longitude.toFixed(4)}
-              </div>
-            </div>
-            <div className="mt-1">
-              <span className="text-muted-foreground">{t("accuracy")}:</span> ±{Math.round(location.accuracy)}m
-            </div>
-          </div>
-        )}
-
-        {/* Live Map */}
-{location && (
-  <div className="relative z-0 h-[300px] w-full rounded-lg overflow-hidden border mt-4">
-    <MapContainer
-
-            center={[location.latitude, location.longitude]}
-            zoom={14}
-            className="h-full w-full"
-          >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-          <Marker position={[location.latitude, location.longitude]}><Popup>You are here</Popup>
-          </Marker>
-
-          <Circle
-            center={[location.latitude, location.longitude]}
-            radius={location.accuracy}
-            pathOptions={{ color: "blue", fillOpacity: 0.15 }}
-          />
-          </MapContainer>
-        </div>
-      )}
-
-      {/* Live Tracking Controls */}
-      <div className="relative z-50 mt-4 flex gap-2">
-        {!isTracking ? (
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => {
-              console.log("🟢 Start Live Tracking clicked");
-              startLiveTracking();
-            }}
-          >
-            ▶ {t("startLiveTracking")}
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            size="sm"
-            variant="destructive"
-            onClick={() => {
-              console.log("🛑 Stop Live Tracking clicked");
-              stopLiveTracking();
-            }}
-          >
-            ⏹ {t("stopLiveTracking")}
-          </Button>
-        )}
-      </div>
-
-        {/* Safety Alerts */}
-        {safetyScore < 70 && (
-          <div className="flex items-start space-x-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-            <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
-            <div className="text-sm">
-              <p className="font-medium text-destructive">{t("safetyAdvisory")}</p>
-              <p className="text-muted-foreground">
-                {safetyScore < 50 
-                  ? t("highRiskMove")
-                  : t("cautionArea")
-                }
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Quick Actions */}
-        <div className="relative z-[1000] grid grid-cols-2 gap-2">
-
-  <Button
-    variant="outline"
-    size="sm"
-    className="text-xs"
-    onClick={handleShareLocation}
-  >
-    <MapPin className="h-3 w-3 mr-1" />{t("shareLocation")}
-  </Button>
-
-  <Button
-    variant="outline"
-    size="sm"
-    className="text-xs"
-    onClick={handleSafeRoutes}
-  >
-    <Navigation className="h-3 w-3 mr-1" />{t("safeRoutes")}
-  </Button>
-</div>
-
-      </CardContent>
-    </Card>
-  );
+return (
+  <div>
+    <h1>WORKING</h1>
+  </div>
+);
 };
 
 export default GeofencingMonitor;

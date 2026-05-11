@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Geolocation } from '@capacitor/geolocation';
+import { Geolocation } from "@capacitor/geolocation";
+import { Capacitor } from "@capacitor/core";
 import {
   Shield,
   AlertTriangle,
@@ -22,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import GeofencingMonitor from "@/GeofencingMonitor";
+import GeofencingMonitor from "../GeofencingMonitor";
 import { supabase } from "@/lib/supabaseClient";
 // @ts-ignore
 import TrustedContacts from "@/components/TrustedContacts";
@@ -107,18 +108,45 @@ const [restaurants, setRestaurants] = useState<any[]>([]);
 const requestLocationAccess = async () => {
   console.log("📍 Enable location clicked");
 
-try {
+  try {
 
-  await Geolocation.requestPermissions();
+    let lat;
+    let lng;
 
-  const position = await Geolocation.getCurrentPosition({
-    enableHighAccuracy: true,
-    timeout: 15000,
-  });
+    // ✅ MOBILE APP (CAPACITOR)
+    if (Capacitor.getPlatform() !== "web") {
 
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
+      await Geolocation.requestPermissions();
 
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 15000,
+      });
+
+      lat = position.coords.latitude;
+      lng = position.coords.longitude;
+
+    } else {
+
+      // ✅ WEB BROWSER
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            {
+              enableHighAccuracy: true,
+              timeout: 15000,
+            }
+          );
+        }
+      );
+
+      lat = position.coords.latitude;
+      lng = position.coords.longitude;
+    }
+
+    // ✅ COMMON LOGIC
     setUserLocation({
       latitude: lat,
       longitude: lng,
@@ -571,12 +599,15 @@ if (error) {
 
         {/* MIDDLE */}
         <div className="lg:col-span-6 space-y-6">
+          <GeofencingMonitor
+  latitude={19.0760}
+  longitude={72.8777}
+/>
 
           {locationPermission === "granted" && userLocation && (
-            <GeofencingMonitor
-              latitude={userLocation.latitude}
-              longitude={userLocation.longitude}
-            />
+            <div className="bg-yellow-300 p-4 text-black text-xl">
+  TEST COMPONENT
+</div>
           )}
 
         </div>
