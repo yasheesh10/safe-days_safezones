@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import { Resend } from "resend";
+import dotenv from "dotenv";
+dotenv.config({ path: "./server/.env" });
+
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -19,35 +22,48 @@ app.post("/api/chat", async (req, res) => {
   const { message } = req.body;
 
   try {
-    const ollamaResponse = await fetch("http://localhost:11434/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-  model: "phi3",
-prompt: `
-You are an AI assistant for a Tourist Safety & Incident Response website.
+const ollamaResponse = await fetch(
+  "http://localhost:11434/api/generate",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama3",
+      prompt: `
+You are SAFE DAYS AI Assistant.
 
-Help users understand features like Emergency SOS, Safe Zones, Dashboards, and Safety Systems.
-If the question is unrelated, answer normally like ChatGPT.
+SAFE DAYS is a Tourist Safety platform.
+
+Features:
+- Emergency SOS
+- Geofencing
+- Live tracking
+- Safe routes
+- Trusted contacts
+- Incident reporting
+
+Answer ONLY about SAFE DAYS.
 
 User: ${message}
-Assistant:
 `,
+      stream: false,
+    }),
+  }
+);
 
-  stream: false,
-}),
+const data = await ollamaResponse.json();
 
-    });
+res.json({
+  reply: data.response,
+});
 
-    const data = await ollamaResponse.json();
-
-    res.json({
-      reply: data.response,
-    });
   } catch (error) {
-    console.error("Ollama error:", error);
+   console.error("Ollama error:", error);
+
     res.status(500).json({
-      reply: "⚠️ AI service is not available right now.",
+      reply: "⚠️ AI service unavailable.",
     });
   }
 });

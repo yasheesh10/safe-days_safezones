@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { connectWallet } from "@/blockchain";
-import heroImage from "@/assets/hero-northeast.jpg";
+import heroImage from "@/assets/kashmir.jpg";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL!,

@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import IntroLoader from "../components/IntroLoader";
 import MagneticButton from "@/components/MagneticButton";
 import TiltCard from "@/components/TiltCard";
+import { Capacitor } from "@capacitor/core";
 import heroVideo from "@/assets/hero-video.mp4";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -11,7 +12,7 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Shield,
   AlertTriangle,
@@ -47,10 +48,14 @@ const supabase = createClient(
 );
 
 const HomePage = () => {
-  const [introDone, setIntroDone] = useState(false);
+
   const { user, setUser } = useAuth();
 const navigate = useNavigate();
+const isNative = Capacitor.isNativePlatform();
 const { t, i18n } = useTranslation();
+const [introDone, setIntroDone] = useState(
+  sessionStorage.getItem("introDone") === "true"
+);
 const handleLogout = async () => {
   await supabase.auth.signOut();
 
@@ -135,7 +140,10 @@ const [input, setInput] = useState("");
   },
 ];
 
-  const particles = Array.from({ length: 10 });
+  const particles = React.useMemo(
+  () => Array.from({ length: 6 }),
+  []
+);
   const culturalAddons = [
     {
       icon: Music,
@@ -170,7 +178,7 @@ const handleQuickQuery = async (text: string) => {
   ]);
 
   try {
-    const res = await fetch("http://localhost:5000/api/chat", {
+    const res = await fetch("http://localhost:5050/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text }),
@@ -194,7 +202,14 @@ const handleQuickQuery = async (text: string) => {
 };
 
 if (!introDone) {
-  return <IntroLoader onFinish={() => setIntroDone(true)} />;
+  return (
+    <IntroLoader
+      onFinish={() => {
+        sessionStorage.setItem("introDone", "true");
+        setIntroDone(true);
+      }}
+    />
+  );
 }
   return (
     <div className="min-h-screen text-white shader-bg relative overflow-hidden">
@@ -227,11 +242,11 @@ if (!introDone) {
     />
   ))}
 </div>
-<div className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[80px] animate-pulse" />
+<div className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[80px]" />
 
 <div className="absolute top-[30%] right-0 w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[80px]" />
 
-<div className="absolute bottom-0 left-[30%] w-[450px] h-[450px] bg-purple-500/10 rounded-full blur-[140px]" />
+<div className="absolute bottom-0 left-[30%] w-[450px] h-[450px] bg-purple-500/10 rounded-full blur-[80px]" />
       {/* Header Navigation */}
       <motion.header
       initial={{ y: -80, opacity: 0 }}
@@ -244,7 +259,7 @@ if (!introDone) {
       rounded-3xl
       shadow-[0_0_40px_rgba(0,0,0,0.25)]"
 >
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between gap-3">
+        <div className="container mx-auto px-3 py-2 flex items-center justify-between gap-2">
           {/* Left: Logo */}
           <div className="flex items-center gap-3 justify-self-start">
             <span className="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-white/5 border border-white/10">
@@ -280,7 +295,7 @@ if (!introDone) {
     className="
     flex items-center justify-between
     w-full sm:w-auto
-    gap-4
+    gap-2
     "
   >
 
@@ -289,12 +304,12 @@ if (!introDone) {
 
       <span
         className="
-        text-sm sm:text-base
+        text-sm sm:text-sm
         font-semibold
         text-white
         "
       >
-        Tourist Safety System
+        Dashboard
       </span>
 
       <span
@@ -331,7 +346,7 @@ if (!introDone) {
         className="
         bg-red-500 hover:bg-red-600
         text-xs sm:text-sm
-        px-3 py-2
+        px-2 py-1
         "
         onClick={handleLogout}
       >
@@ -357,30 +372,82 @@ if (!introDone) {
     
      {/* Hero Section */}
 <motion.section
-  className="relative min-h-[140svh] sm:min-h-[120svh] md:min-h-[100svh] overflow-hidden flex items-center justify-center"
+  className="relative min-h-[100svh] overflow-hidden flex items-center justify-center"
   initial={{ opacity: 0 }}
   animate={{ opacity: 1 }}
   transition={{ duration: 1.2 }}
 >
 
-  {/* Background Video */}
-<video
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
-  className="
-absolute inset-0
-w-full h-full
-object-cover
-scale-105
-z-0
-[filter:brightness(1.1)_contrast(1.2)_saturate(1.2)]
-"
->
-  <source src={heroVideo} type="video/mp4" />
-</video>
+{/* Dynamic Background */}
+{isNative ? (
+
+  /* MOBILE APP BACKGROUND */
+<div className="absolute inset-0 z-0 overflow-hidden">
+
+  {/* Background Image */}
+  <div
+    className="
+    absolute inset-0
+    bg-cover
+    bg-center
+    scale-110
+    "
+    style={{
+      backgroundImage: "url('/india-map.jpg')",
+    }}
+  />
+
+  {/* Dark Overlay */}
+  <div className="
+    absolute inset-0
+    bg-black/55
+  " />
+
+  {/* Blue Gradient Overlay */}
+  <div className="
+    absolute inset-0
+    bg-gradient-to-b
+    from-[#06142E]/70
+    via-[#0B2E3F]/40
+    to-[#041B1F]/80
+  " />
+
+  {/* Glow */}
+  <div className="
+    absolute
+    top-20
+    left-10
+    w-72
+    h-72
+    bg-cyan-400/20
+    blur-3xl
+    rounded-full
+  " />
+
+</div>
+
+) : (
+
+  /* WEB VIDEO */
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="metadata"
+    className="
+    absolute inset-0
+    w-full h-full
+    object-cover
+    scale-105
+    z-0
+    [filter:brightness(1.1)_contrast(1.2)_saturate(1.2)]
+    "
+  >
+    <source src={heroVideo} type="video/mp4" />
+  </video>
+
+)}
 
 <div className="
 absolute inset-0
@@ -417,7 +484,7 @@ to-[#020617]
   flex flex-col
   items-center
   justify-start
-  pt-28 sm:pt-24 md:justify-center md:pt-0
+  pt-20 sm:pt-24 md:justify-center md:pt-0
   text-center
   px-6
   ">
@@ -434,7 +501,6 @@ to-[#020617]
 
     {/* Heading */}
     <motion.h1
-      hero-heading
       className="text-4xl sm:text-5xl md:text-6xl xl:text-[5.5rem] font-black leading-tight tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
       initial={{ opacity: 0, y: 80 }}
       animate={{ opacity: 1, y: 0 }}
@@ -463,7 +529,7 @@ to-[#020617]
 
     {/* Subtitle */}
     <motion.p
-      className="mt-5 text-lg md:text-2xl text-white/75 max-w-3xl leading-relaxed"
+      className="mt-5 text-lg md:text-2xl text-white/75 max-w-md md:max-w-3xl leading-relaxed"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 0.4 }}
@@ -482,7 +548,7 @@ to-[#020617]
 
       <Button
         className="
-        h-16 w-full sm:min-w-[220px] sm:w-auto
+        h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
         rounded-2xl
         bg-blue-600 hover:bg-blue-500
         text-lg font-semibold
@@ -497,7 +563,7 @@ to-[#020617]
       <Button
         variant="outline"
         className="
-        h-16 w-full sm:min-w-[220px] sm:w-auto
+        h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
         rounded-2xl
         border border-cyan-300/40
         bg-white/5
@@ -516,7 +582,7 @@ to-[#020617]
 
       <Button
         className="
-        h-16 w-full sm:min-w-[220px] sm:w-auto
+        h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
         rounded-2xl
         bg-black/10 hover:bg-black
         border border-white/10
@@ -550,16 +616,16 @@ to-[#020617]
         <div
           key={label}
           className="
-          px-8 py-5
+          px-5 py-4
           rounded-2xl
           bg-white/[0.04]
           border border-white/10
           backdrop-blur-xl
-          w-full max-w-[320px] sm:min-w-[180px]
+          w-full max-w-[280px] sm:min-w-[180px]
           "
         >
 
-          <div className="text-3xl font-bold text-cyan-300">
+          <div className="text-2xl font-bold text-cyan-300">
             {number}
           </div>
 
@@ -589,7 +655,7 @@ to-[#020617]
     
     {/* Heading */}
     <div className="text-center mb-14">
-      <h2 className="text-3xl md:text-4xl font-bold mb-3">
+      <h2 className="text-2xl md:text-4xl font-bold mb-3">
         Explore Safe Destinations
       </h2>
       <p className="text-white/70 max-w-3xl mx-auto">
@@ -648,7 +714,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition" />
 
           {/* Content */}
-          <div className="absolute bottom-4 left-4">
+          <div className="absolute bottom-20 left-4">
             <h3 className="text-xl font-semibold">{place.name}</h3>
 
             <span
@@ -728,7 +794,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
       01
     </div>
 
-    <h3 className="text-3xl font-bold mb-4">
+    <h3 className="text-2xl font-bold mb-4">
       AI Safe Zones
     </h3>
 
@@ -747,7 +813,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
       02
     </div>
 
-    <h3 className="text-3xl font-bold mb-4">
+    <h3 className="text-2xl font-bold mb-4">
       Emergency SOS
     </h3>
 
@@ -766,7 +832,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
       03
     </div>
 
-    <h3 className="text-3xl font-bold mb-4">
+    <h3 className="text-2xl font-bold mb-4">
       Cultural Discovery
     </h3>
 
@@ -875,7 +941,7 @@ hover:shadow-[0_0_50px_rgba(34,211,238,0.25)]"
               " />
                 <CardHeader className="text-center pb-4">
                   <div className="mx-auto bg-cyan-500/10 border border-cyan-400/20 
-                  p-4 rounded-2xl w-16 h-16 flex items-center justify-center mb-4 
+                  p-4 rounded-2xl w-16 h-14 md:h-16 flex items-center justify-center mb-4 
                   group-hover:scale-110 group-hover:rotate-6 transition duration-300">
                     <feature.icon className="h-8 w-8 text-cyan-300" />
                   </div>
@@ -1013,8 +1079,8 @@ pointer-events-none
 
       {/* Footer */}
       <footer className="bg-slate-950">
-        <div className="container mx-auto px-4 py-16">
-          <div className="grid md:grid-cols-4 gap-8">
+        <div className="container mx-auto px-4 py-10">
+          <div className="flex flex-col gap-10">
             {/* Company Info */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
@@ -1072,7 +1138,7 @@ pointer-events-none
             </div>
 
             {/* Contact Us */}
-            <div id="contact" className="space-y-4 ml-auto mr-100 w-fit">
+            <div id="contact" className="space-y-4 w-full">
               <h3 className="font-semibold">{t("contactUs")}</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-2 text-white/70">
@@ -1093,7 +1159,7 @@ pointer-events-none
                 </div>
                 <div className="flex items-center gap-2 text-white/70">
                   <Mail className="h-4 w-4 text-cyan-300" />
-                  <span>safety@netourist.gov.in</span>
+                  <span>support@safedays.ai</span>
                 </div>
               </div>
             </div>
@@ -1229,7 +1295,7 @@ pointer-events-none
   setInput("");
 
   try {
-    const res = await fetch("http://localhost:5000/api/chat", {
+    const res = await fetch("http://localhost:5050/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1262,7 +1328,7 @@ pointer-events-none
 
       {/* Floating Chat Toggle */}
       <Button
-        className={`fixed bottom-4 right-4 rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-500 shadow-2xl shadow-blue-600/40 ring-1 ring-blue-300/40 ${focusRing}`}
+        className={`fixed bottom-24 right-4 rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-500 shadow-2xl shadow-blue-600/40 ring-1 ring-blue-300/40 ${focusRing}`}
         onClick={() => setChatOpen(!chatOpen)}
       >
         <MessageCircle className="h-6 w-6 text-white" />
@@ -1278,4 +1344,4 @@ pointer-events-none
   );
 };
 
-export default HomePage;
+export default React.memo(HomePage);

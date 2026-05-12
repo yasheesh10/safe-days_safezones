@@ -101,7 +101,7 @@ lng: "Lng",
 highRiskMove: "High risk area detected. Consider moving to a safer location.",
 
 
-        appName: "Tourist Safety System",
+        appName: "SAFE DAYS",
         features: "Features",
         dashboards: "Dashboards",
         login: "Login",
@@ -120,7 +120,7 @@ maybeLater: "Maybe Later",
         heroTitle1: "Tourist Safety &",
         heroTitle2: "Incident Response",
         heroSubtitle:
-          "Ensuring every traveler’s safety through innovation inspired by our people, traditions, and timeless heritage.",
+          "AI-powered tourist safety platform for secure travel across India.",
 
         emergencySOS: "Emergency SOS",
         exploreFeatures: "Explore Features",
@@ -179,7 +179,7 @@ wind: "Wind",
         privacyPolicy: "Privacy Policy",
         terms: "Terms of Service",
 
-        smartSafety: "Smart Safety System",
+        smartSafety: "AI Tourist Safety Platform",
 stopLiveTracking: "Stop Live Tracking",
 gpsActive: "GPS Active",
 demoMode: "Demo Mode",
@@ -191,10 +191,10 @@ youAreHere: "You are here",
 accuracy: "Accuracy",
 
         copyright:
-          "© 2025 Safe-DAYS — Smart Tourist Safety System. All rights reserved.",
+          "© 2026 Safe-DAYS. All rights reserved.",
 
         madeWithLove:
-          "Built with ❤️ and innovation to protect every traveler, everywhere.",
+  "Secure travel assistance powered by AI and real-time safety intelligence.",
 
         india: "India",
 emergencyNumber: "Emergency:",
@@ -385,13 +385,13 @@ navigate: "नेविगेट करें",
         privacyPolicy: "गोपनीयता नीति",
         terms: "नियम और शर्तें",
 
-        smartSafety: "स्मार्ट सुरक्षा प्रणाली",
+        smartSafety: "AI आधारित पर्यटक सुरक्षा मंच",
 
         copyright:
           "© 2025 Safe-DAYS — स्मार्ट पर्यटक सुरक्षा प्रणाली। सर्वाधिकार सुरक्षित।",
 
         madeWithLove:
-          "❤️ और नवाचार के साथ हर यात्री की सुरक्षा के लिए बनाया गया।",
+          "AI और रियल-टाइम सुरक्षा तकनीक द्वारा संचालित सुरक्षित यात्रा सहायता।",
       },
     },
 
@@ -574,13 +574,13 @@ navigate: "नेव्हिगेट करा",
         privacyPolicy: "गोपनीयता धोरण",
         terms: "अटी व शर्ती",
 
-        smartSafety: "स्मार्ट सुरक्षा प्रणाली",
+        smartSafety: "AI आधारित पर्यटक सुरक्षा प्लॅटफॉर्म",
 
         copyright:
           "© 2025 Safe-DAYS — स्मार्ट पर्यटक सुरक्षा प्रणाली. सर्व हक्क राखीव.",
 
         madeWithLove:
-          "❤️ आणि नवोपक्रमासह प्रत्येक प्रवाशाच्या सुरक्षेसाठी तयार केले.",
+          "AI आणि रिअल-टाइम सुरक्षा तंत्रज्ञानावर आधारित सुरक्षित प्रवास सहाय्य.",
       },
     },
   },

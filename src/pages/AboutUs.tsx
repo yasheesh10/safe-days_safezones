@@ -1,6 +1,19 @@
-import { Shield, Users, Target, Heart, Award, Globe } from "lucide-react";
+import {
+  Shield,
+  Users,
+  Target,
+  Heart,
+  Award,
+  Globe,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-northeast.jpg";
 
@@ -8,87 +21,185 @@ const AboutUs = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="
+      min-h-screen
+      text-white
+      relative
+      overflow-hidden
+      bg-gradient-to-b
+      from-[#020617]
+      via-[#071427]
+      to-[#041B2D]
+    "
+    >
+      {/* Ambient Background Glows */}
+      <div
+        className="
+        absolute
+        top-[-120px]
+        left-[-120px]
+        w-[450px]
+        h-[450px]
+        bg-cyan-500/15
+        blur-[140px]
+        rounded-full
+      "
+      />
+
+      <div
+        className="
+        absolute
+        bottom-[-150px]
+        right-[-100px]
+        w-[400px]
+        h-[400px]
+        bg-blue-500/10
+        blur-[120px]
+        rounded-full
+      "
+      />
+
       {/* Header Navigation */}
-      <header className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
+      <header className="bg-white/5 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold bg-gradient-cultural bg-clip-text text-transparent">
-              NE Tourist Safety System
+          <div className="flex items-center space-x-3">
+            <Shield className="h-8 w-8 text-cyan-300" />
+
+            <span className="text-xl font-bold bg-gradient-to-r from-cyan-300 via-blue-300 to-white bg-clip-text text-transparent">
+              SAFE DAYS
             </span>
           </div>
-          <Button variant="outline" onClick={() => navigate("/")}>
+
+          <Button
+            variant="outline"
+            className="
+              bg-white/5
+              border border-white/10
+              backdrop-blur-xl
+              rounded-2xl
+              hover:bg-white/10
+              text-white
+            "
+            onClick={() => navigate("/")}
+          >
             Back to Home
           </Button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-28 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src={heroImage} 
-            alt="North East India" 
-            className="w-full h-full object-cover opacity-40"
+          <img
+            src={heroImage}
+            alt="Travel Safety"
+            className="w-full h-full object-cover opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90" />
+
+          <div
+            className="
+            absolute inset-0
+            bg-gradient-to-r
+            from-[#020617]/95
+            via-[#020617]/80
+            to-[#020617]/95
+          "
+          />
         </div>
-        
+
         <div className="container mx-auto px-4 z-10 relative">
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-              <span className="bg-gradient-cultural bg-clip-text text-transparent">
-                About Our Mission
+            <h1
+              className="
+              text-5xl md:text-7xl
+              font-black
+              mb-8
+              leading-tight
+              tracking-tight
+            "
+            >
+              <span className="bg-gradient-to-r from-cyan-300 via-blue-300 to-white bg-clip-text text-transparent">
+                About SAFE DAYS
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Preserving our cultural identity while embracing technological advancement for tourist safety
+
+            <p className="text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+              AI-powered tourist safety platform combining intelligent travel
+              protection, emergency response, and cultural exploration for safer
+              journeys across India.
             </p>
           </div>
         </div>
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-20 bg-card/50">
+      <section className="py-24 relative z-10">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                The North East Tourist Safety & Incident Response System is dedicated to protecting travelers 
-                while celebrating the rich cultural heritage of North East India. We combine cutting-edge 
-                blockchain technology with AI-powered safety measures to ensure every tourist can explore 
-                our region with confidence.
+              <h2 className="text-4xl font-bold mb-6">
+                Our Mission
+              </h2>
+
+              <p className="text-white/70 mb-8 leading-relaxed text-lg">
+                SAFE DAYS combines AI-powered emergency intelligence,
+                live safety tracking, and smart travel assistance to
+                create safer journeys while enhancing tourism
+                experiences across India.
               </p>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Shield className="h-6 w-6 text-primary" />
-                  <span>Ensure tourist safety through advanced technology</span>
+
+              <div className="space-y-5">
+                <div className="flex items-center space-x-4">
+                  <Shield className="h-6 w-6 text-cyan-300" />
+
+                  <span className="text-white/80">
+                    Intelligent tourist safety monitoring
+                  </span>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Heart className="h-6 w-6 text-primary" />
-                  <span>Preserve and promote North Eastern culture</span>
+
+                <div className="flex items-center space-x-4">
+                  <Heart className="h-6 w-6 text-cyan-300" />
+
+                  <span className="text-white/80">
+                    Human-centered emergency response
+                  </span>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Globe className="h-6 w-6 text-primary" />
-                  <span>Foster sustainable tourism development</span>
+
+                <div className="flex items-center space-x-4">
+                  <Globe className="h-6 w-6 text-cyan-300" />
+
+                  <span className="text-white/80">
+                    Smart and secure travel experiences
+                  </span>
                 </div>
               </div>
             </div>
-            
-            <Card className="card-cultural">
+
+            <Card
+              className="
+                bg-white/5
+                border border-white/10
+                backdrop-blur-xl
+                rounded-3xl
+                p-4
+              "
+            >
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Target className="h-6 w-6 text-primary" />
+                <CardTitle className="flex items-center space-x-3 text-white">
+                  <Target className="h-6 w-6 text-cyan-300" />
+
                   <span>Our Vision</span>
                 </CardTitle>
               </CardHeader>
+
               <CardContent>
-                <p className="text-muted-foreground">
-                  To make North East India the safest and most culturally enriching tourist destination 
-                  in the world, where technology seamlessly integrates with tradition to create 
-                  unforgettable experiences for every visitor.
+                <p className="text-white/70 leading-relaxed">
+                  To become India’s most trusted AI-powered tourist
+                  safety platform where technology, emergency response,
+                  and cultural exploration seamlessly work together
+                  to ensure every traveler experiences safe and
+                  memorable journeys.
                 </p>
               </CardContent>
             </Card>
@@ -96,33 +207,90 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Seven Sister States */}
-      <section className="py-20">
+      {/* Explore India */}
+      <section className="py-24 relative z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Seven Sister States</h2>
-            <p className="text-xl text-muted-foreground">
-              Protecting travelers across the magnificent northeastern states of India
+            <h2 className="text-5xl font-bold mb-5">
+              Explore India Safely
+            </h2>
+
+            <p className="text-xl text-white/60 max-w-2xl mx-auto">
+              Discover India’s diverse cultures, landscapes, heritage,
+              and destinations with AI-powered travel safety.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { name: "Assam", capital: "Guwahati", feature: "Tea Gardens & Kaziranga" },
-              { name: "Arunachal Pradesh", capital: "Itanagar", feature: "Monasteries & Peaks" },
-              { name: "Manipur", capital: "Imphal", feature: "Classical Dance & Lakes" },
-              { name: "Meghalaya", capital: "Shillong", feature: "Living Bridges & Caves" },
-              { name: "Mizoram", capital: "Aizawl", feature: "Hills & Bamboo Crafts" },
-              { name: "Nagaland", capital: "Kohima", feature: "Tribal Culture & Festivals" },
-              { name: "Tripura", capital: "Agartala", feature: "Palaces & Temples" }
+              {
+                name: "Kashmir",
+                capital: "Srinagar",
+                feature: "Mountains & Valleys",
+              },
+              {
+                name: "Rajasthan",
+                capital: "Jaipur",
+                feature: "Forts & Desert Culture",
+              },
+              {
+                name: "Kerala",
+                capital: "Thiruvananthapuram",
+                feature: "Backwaters & Nature",
+              },
+              {
+                name: "Goa",
+                capital: "Panaji",
+                feature: "Beaches & Tourism",
+              },
+              {
+                name: "Maharashtra",
+                capital: "Mumbai",
+                feature: "Cities & Heritage",
+              },
+              {
+                name: "Sikkim",
+                capital: "Gangtok",
+                feature: "Monasteries & Mountains",
+              },
+              {
+                name: "Punjab",
+                capital: "Chandigarh",
+                feature: "Culture & Hospitality",
+              },
+              {
+                name: "Tamil Nadu",
+                capital: "Chennai",
+                feature: "Temples & Tradition",
+              },
             ].map((state, index) => (
-              <Card key={index} className="card-cultural hover:shadow-elegant transition-all duration-300">
+              <Card
+                key={index}
+                className="
+                  bg-white/5
+                  border border-white/10
+                  backdrop-blur-xl
+                  rounded-3xl
+                  hover:border-cyan-400/30
+                  hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]
+                  hover:-translate-y-1
+                  transition-all duration-300
+                "
+              >
                 <CardHeader className="text-center">
-                  <CardTitle className="text-lg">{state.name}</CardTitle>
-                  <CardDescription>Capital: {state.capital}</CardDescription>
+                  <CardTitle className="text-lg text-white">
+                    {state.name}
+                  </CardTitle>
+
+                  <CardDescription className="text-white/50">
+                    Capital: {state.capital}
+                  </CardDescription>
                 </CardHeader>
+
                 <CardContent className="text-center">
-                  <p className="text-sm text-muted-foreground">{state.feature}</p>
+                  <p className="text-sm text-white/60">
+                    {state.feature}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -130,44 +298,71 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Traditional Wisdom */}
-      <section className="py-20 bg-accent/5">
+      {/* Smart Travel Protection */}
+      <section className="py-24 relative z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Traditional Wisdom</h2>
-            <p className="text-xl text-muted-foreground">
-              Integrating ancient knowledge with modern safety
+            <h2 className="text-5xl font-bold mb-5">
+              Smart Travel Protection
+            </h2>
+
+            <p className="text-xl text-white/60">
+              Combining AI-powered safety systems with human support
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <Card className="card-cultural p-8">
-              <blockquote className="text-center italic text-lg text-muted-foreground mb-6">
-                "Preserving our cultural identity while embracing technological advancement for tourist safety"
+          <div className="max-w-5xl mx-auto">
+            <Card
+              className="
+                bg-white/5
+                border border-white/10
+                backdrop-blur-xl
+                rounded-3xl
+                p-8
+              "
+            >
+              <blockquote className="text-center italic text-xl text-white/70 mb-10 leading-relaxed">
+                “Empowering safer journeys through AI-powered protection,
+                emergency response, and community-driven travel support.”
               </blockquote>
-              
+
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
-                  <Users className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Community First</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Our safety system is built on the foundation of strong community bonds
+                  <Users className="h-14 w-14 text-cyan-300 mx-auto mb-5" />
+
+                  <h3 className="font-semibold mb-3 text-xl">
+                    Community
+                  </h3>
+
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    Strong local communities help create safer and more
+                    welcoming travel experiences.
                   </p>
                 </div>
-                
+
                 <div className="text-center">
-                  <Award className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Excellence</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Striving for the highest standards in tourist safety and cultural preservation
+                  <Award className="h-14 w-14 text-cyan-300 mx-auto mb-5" />
+
+                  <h3 className="font-semibold mb-3 text-xl">
+                    Excellence
+                  </h3>
+
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    Advanced technology and rapid response systems ensure
+                    dependable tourist safety.
                   </p>
                 </div>
-                
+
                 <div className="text-center">
-                  <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Care</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Every tourist is treated as a guest in our beautiful homeland
+                  <Heart className="h-14 w-14 text-cyan-300 mx-auto mb-5" />
+
+                  <h3 className="font-semibold mb-3 text-xl">
+                    Care
+                  </h3>
+
+                  <p className="text-sm text-white/60 leading-relaxed">
+                    Every traveler deserves secure, stress-free, and
+                    memorable journeys.
                   </p>
                 </div>
               </div>
@@ -177,25 +372,65 @@ const AboutUs = () => {
       </section>
 
       {/* Contact Information */}
-      <section className="py-20">
+      <section className="py-24 relative z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Get In Touch</h2>
-            <p className="text-xl text-muted-foreground">
-              Connect with us for a safer travel experience
+            <h2 className="text-5xl font-bold mb-5">
+              Get In Touch
+            </h2>
+
+            <p className="text-xl text-white/60">
+              Connect with SAFE DAYS for secure and smarter travel
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto">
-            <Card className="card-cultural p-8 text-center">
-              <h3 className="text-2xl font-bold mb-6">North East India</h3>
-              <div className="space-y-4 text-muted-foreground">
-                <p>📍 Guwahati, Assam, North East India</p>
-                <p>📞 Emergency: 112 | Tourist Helpline: 1363</p>
-                <p>✉️ safety@netourist.gov.in</p>
+          <div className="max-w-3xl mx-auto">
+            <Card
+              className="
+                bg-white/5
+                border border-white/10
+                backdrop-blur-xl
+                rounded-3xl
+                p-10
+                text-center
+              "
+            >
+              <h3 className="text-3xl font-bold mb-8">
+                SAFE DAYS Support
+              </h3>
+
+              <div className="space-y-5 text-white/70 text-lg">
+                <p>📍 Mumbai, Maharashtra, India</p>
+
+                <p>
+                  📞 Emergency:
+                  <span className="text-red-400 font-semibold ml-2">
+                    112
+                  </span>
+                  {" | "}
+                  Tourist Helpline:
+                  <span className="text-cyan-300 font-semibold ml-2">
+                    1363
+                  </span>
+                </p>
+
+                <p>✉️ support@safedays.ai</p>
               </div>
-              <div className="mt-8">
-                <Button className="btn-cultural" onClick={() => navigate("/")}>
+
+              <div className="mt-10">
+                <Button
+                  className="
+                    h-14 px-8
+                    rounded-2xl
+                    bg-gradient-to-r
+                    from-cyan-500
+                    to-blue-500
+                    hover:scale-105
+                    transition-all
+                    font-semibold
+                  "
+                  onClick={() => navigate("/")}
+                >
                   Return to Homepage
                 </Button>
               </div>
@@ -205,10 +440,35 @@ const AboutUs = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2025 North East Tourist Safety System. All rights reserved.</p>
-          <p className="mt-2">Developed with ❤️ for the beautiful North Eastern states of India</p>
+      <footer className="border-t border-white/10 py-10 relative z-10">
+        <div className="container mx-auto px-4 text-center">
+          <div className="text-2xl font-bold mb-3">
+            SAFE DAYS
+          </div>
+
+          <p className="text-white/60 mb-5">
+            AI-powered tourist safety platform for secure travel.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-6 text-sm text-white/60">
+            <div>
+              Emergency:
+              <span className="text-red-400 font-semibold ml-2">
+                112
+              </span>
+            </div>
+
+            <div>
+              Tourist Helpline:
+              <span className="text-cyan-300 font-semibold ml-2">
+                1363
+              </span>
+            </div>
+          </div>
+
+          <p className="mt-8 text-xs text-white/40">
+            © 2026 SAFE DAYS. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

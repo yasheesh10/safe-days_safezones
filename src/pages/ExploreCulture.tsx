@@ -334,8 +334,8 @@ const ExploreCulture = () => {
       {/* Footer */}
       <footer className="bg-card border-t border-border py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2025 North East Tourist Safety System. All rights reserved.</p>
-          <p className="mt-2">Preserving culture while ensuring your safety across the seven sister states</p>
+          <p>© 2026 SAFE DAYS. All rights reserved.</p>
+          
         </div>
       </footer>
 

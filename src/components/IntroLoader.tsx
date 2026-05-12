@@ -14,7 +14,7 @@ import ellora from "../assets/ellora-caves.jpg";
 const images = [
   gangaAarti,
   goldenTemple,
-  shivaji,
+  gateway,
   ellora,
 ];
 
