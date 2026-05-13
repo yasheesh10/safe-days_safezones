@@ -456,7 +456,7 @@ if (error) {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900">
       
       {showLocationPrompt && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex items-center justify-center text-white"> 
@@ -499,7 +499,7 @@ if (error) {
 
 
       {/* HEADER */}
-      <header className="bg-white border-b">
+      <header className="bg-slate-900/80 border-b border-cyan-500/20 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between">
 
           <div className="flex items-center gap-2">
@@ -524,13 +524,13 @@ if (error) {
             </CardHeader>
             <CardContent>
               <Button
-                className="w-full bg-red-600"
+                className="w-full bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-400 hover:to-rose-500"
                 onClick={handleSOS}
                 disabled={sosActive}
               >{sosActive ? t("sosActive") : t("sendSOS")}
               </Button>
               <Button
-  className="w-full bg-black text-white mt-2"
+  className="w-full mt-2 bg-slate-800 border border-cyan-500/20 hover:bg-slate-700 text-white"
   onClick={handleCallPolice}
 >
   📞 Call Police
@@ -566,7 +566,7 @@ if (error) {
               <CardTitle>{t("accountStatus")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <Badge className="bg-green-600">{t("verifiedTourist")}</Badge>
+              <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">{t("verifiedTourist")}</Badge>
             </CardContent>
           </Card>
           {weather?.main && (
@@ -619,7 +619,7 @@ if (error) {
             </CardHeader>
             <CardContent className="space-y-3">
               <select
-                className="w-full border p-2 rounded"
+                className="w-full border border-cyan-500/20 bg-slate-950/60 text-white p-2 rounded-xl"
                 value={incidentType}
                 onChange={(e) => setIncidentType(e.target.value)}
               >
@@ -631,14 +631,14 @@ if (error) {
               </select>
 
               <textarea
-                className="w-full border p-2 rounded"
+                className="w-full border border-cyan-500/20 bg-slate-950/60 text-white p-2 rounded-xl"
                 rows={3}
                 value={incidentDesc}
                 onChange={(e) => setIncidentDesc(e.target.value)}
                 placeholder={t("describeIncident")}
               />
 
-              <Button className="w-full bg-green-600" onClick={submitIncident}>
+              <Button className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white" onClick={submitIncident}>
                 {t("submitReport")}
               </Button>
             </CardContent>
@@ -694,7 +694,7 @@ if (error) {
       {restaurants.map((place, index) => (
         <div
           key={index}
-          className="p-3 border rounded-xl text-sm hover:bg-muted cursor-pointer bg-white"
+          className="p-3 border border-cyan-500/20 rounded-xl text-sm hover:bg-slate-800 cursor-pointer bg-slate-900/80 text-white"
           onClick={() =>
             window.open(
               `https://www.google.com/maps/search/?api=1&query=${place.properties.lat},${place.properties.lon}`,

@@ -54,7 +54,11 @@ type SafeZone = {
   incident_count?: number;
 };
 
-export default function GeoLocationMap() {
+export default function GeoLocationMap({
+  city,
+}: {
+  city: string;
+}) {
 const [safeZones, setSafeZones] = useState<SafeZone[]>([]);
 const [zoom, setZoom] = useState<number>(12);
 const [banner, setBanner] = useState<{ type: "safe" | "danger" | "info"; msg: string } | null>(null);
@@ -284,14 +288,28 @@ setStatus(newStatus as "unknown" | "inside" | "outside" | "landmark");
     };
   }, []);
 
-  const center: LatLngTuple = pos ?? [19.0760, 72.8777];
+  let defaultCenter: LatLngTuple = [19.0760, 72.8777]; // Mumbai
+
+if (city === "goa") {
+  defaultCenter = [15.2993, 74.1240];
+}
+
+if (city === "delhi") {
+  defaultCenter = [28.6139, 77.2090];
+}
+
+if (city === "northeast") {
+  defaultCenter = [26.2006, 92.9376];
+}
+
+const center: LatLngTuple = pos ?? defaultCenter;
 
   return (
     <div className="relative w-full h-[85vh] rounded-xl overflow-hidden">
       {/* ---------- status badge ---------- */}
       <div className="absolute z-[1000] left-3 top-3">
         {nearestZone && nearestDistance !== null && (
-  <div className="mt-2 px-3 py-2 rounded-lg bg-white text-sm shadow">
+  <div className="mt-2 px-3 py-2 rounded-lg bg-slate-900/90 border border-cyan-500/20 backdrop-blur-xltext-sm shadow">
     📍 Nearest: <strong>{nearestZone.name}</strong><br />
     Distance:{" "}
     {nearestDistance < 1
@@ -304,25 +322,25 @@ setStatus(newStatus as "unknown" | "inside" | "outside" | "landmark");
             {errorMsg}
           </div>
           ) : status === "landmark" ? (
-  <div className="px-3 py-2 rounded-lg bg-blue-100 text-blue-900 text-sm shadow">
+  <div className="px-3 py-2 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-xl text-sm shadow">
     📍 Tourist Landmark Nearby{" "}
     {accuracy && (
       <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
     )}
   </div>
         ) : status === "unknown" ? (
-          <div className="px-3 py-2 rounded-lg bg-slate-100 text-slate-900 text-sm shadow">
+          <div className="px-3 py-2 rounded-lg bg-slate-900/90 text-slate-300 border border-cyan-500/20 backdrop-blur-xl text-sm shadow">
             Fetching location…
           </div>
         ) : status === "inside" ? (
-          <div className="px-3 py-2 rounded-lg bg-emerald-100 text-emerald-900 text-sm shadow">
+          <div className="px-3 py-2 rounded-lg bg-slate-900/90 text-white border border-emerald-400/30 backdrop-blur-xl text-sm shadow">
             ✅ Inside Safe Zone{" "}
             {accuracy && (
               <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
             )}
           </div>
         ) : (
-          <div className="px-3 py-2 rounded-lg bg-amber-100 text-amber-900 text-sm shadow">
+          <div className="px-3 py-2 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-xl text-sm shadow">
             ⚠️ Outside Safe Zone{" "}
             {accuracy && (
               <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
@@ -338,14 +356,14 @@ setStatus(newStatus as "unknown" | "inside" | "outside" | "landmark");
       <div className="absolute z-[1000] right-3 top-3 flex gap-2">
         <button
           onClick={locateOnce}
-          className="px-3 py-2 rounded-lg bg-white shadow text-sm hover:bg-slate-50"
+          className="px-3 py-2 rounded-lg bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl"
           title="Locate me once"
         >
           📍 Locate me
         </button>
         <button
           onClick={() => pos && mapRef.current?.flyTo(pos, 17)}
-          className="px-3 py-2 rounded-lg bg-white shadow text-sm hover:bg-slate-50"
+          className="px-3 py-2 rounded-lg bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl"
           title="Recenter"
         >
           🎯 Recenter
@@ -353,7 +371,7 @@ setStatus(newStatus as "unknown" | "inside" | "outside" | "landmark");
         <button
           onClick={toggleWatch}
           className={`px-3 py-2 rounded-lg shadow text-sm ${
-            watching ? "bg-green-600 text-white" : "bg-white hover:bg-slate-50"
+            watching ? "bg-green-600 text-white" : "bg-slate-900/90 border border-cyan-500/20 backdrop-blur-xl hover:bg-slate-800"
           }`}
           title="Start/stop live tracking"
         >

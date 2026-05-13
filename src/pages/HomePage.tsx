@@ -330,12 +330,17 @@ if (!introDone) {
       <select
         value={i18n.language}
         onChange={(e) => i18n.changeLanguage(e.target.value)}
-        className="
-        text-black
-        px-2 py-1
-        rounded-lg
-        text-sm
-        "
+       className="
+bg-slate-900/80
+border border-cyan-400/30
+text-white
+rounded-xl
+px-3 py-2
+backdrop-blur-xl
+focus:outline-none
+focus:ring-2
+focus:ring-cyan-500
+"
       >
         <option value="en">EN</option>
         <option value="hi">हिंदी</option>
@@ -400,7 +405,7 @@ if (!introDone) {
   {/* Dark Overlay */}
   <div className="
     absolute inset-0
-    bg-black/55
+    bg-black/35
   " />
 
   {/* Blue Gradient Overlay */}
@@ -508,9 +513,9 @@ to-[#020617]
       
     >
 
-      <span className="block text-white">
-        Explore India
-      </span>
+<span className="block text-white">
+  {t("exploreIndia")}
+</span>
 
       <span className="
       block
@@ -522,7 +527,7 @@ to-[#020617]
       text-transparent
       drop-shadow-[0_0_20px_rgba(34,211,238,0.25)]
       ">
-        Safely.
+        {t("safely")}
       </span>
 
     </motion.h1>
@@ -550,7 +555,10 @@ to-[#020617]
         className="
         h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
         rounded-2xl
-        bg-blue-600 hover:bg-blue-500
+        bg-gradient-to-r from-cyan-500 to-blue-600
+hover:from-cyan-400 hover:to-blue-500
+text-white
+border border-cyan-300/30
         text-lg font-semibold
         shadow-[0_0_30px_rgba(37,99,235,0.45)]
         "
@@ -563,37 +571,42 @@ to-[#020617]
       <Button
         variant="outline"
         className="
-        h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
-        rounded-2xl
-        border border-cyan-300/40
-        bg-white/5
-        backdrop-blur-xl
-        text-lg text-cyan-200
-        hover:bg-cyan-400/10
-        "
+h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
+rounded-2xl
+border border-cyan-400/30
+bg-slate-900/60
+backdrop-blur-xl
+text-white
+hover:bg-slate-800/70
+transition-all duration-300
+shadow-[0_0_20px_rgba(34,211,238,0.15)]
+"
         onClick={() =>
           document
             .getElementById("features")
             ?.scrollIntoView({ behavior: "smooth" })
         }
       >
-        Explore Features
+        {t("exploreFeatures")}
       </Button>
 
       <Button
         className="
-        h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
-        rounded-2xl
-        bg-black/10 hover:bg-black
-        border border-white/10
-        backdrop-blur-xl
-        text-lg
-        "
-        onClick={() => navigate("/safezone")}
+h-14 md:h-16 w-full sm:min-w-[220px] sm:w-auto
+rounded-2xl
+bg-slate-900/60
+hover:bg-slate-800/70
+border border-cyan-400/20
+backdrop-blur-xl
+text-white
+transition-all duration-300
+shadow-[0_0_20px_rgba(34,211,238,0.1)]
+"
+onClick={() => navigate("/safezone")}
       >
         
         <MapPin className="mr-2 h-5 w-5" />
-        Check Safe Zone
+        {t("checkSafeZone")}
       </Button>
 
 
@@ -689,7 +702,7 @@ to-[#020617]
           name: "Northeast",
           safety: "Safe & Scenic",
           color: "green",
-          img: "https://images.unsplash.com/photo-1548013146-72479768bada",
+          img: "https://images.unsplash.com/photo-1625654325562-762dcec9e6f2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         },
       ].map((place, index) => (
         <motion.div
@@ -698,7 +711,9 @@ to-[#020617]
   transition={{ duration: 0.8, delay: index * 0.15 }}
   viewport={{ once: true }}
          key={index}
-         onClick={() => navigate("/safezone")}
+         onClick={() =>
+  navigate(`/safezone?city=${place.name.toLowerCase()}`)
+}
          className="group relative rounded-2xl overflow-hidden cursor-pointer 
 transition duration-700 ease-out
 hover:scale-105 hover:-translate-y-2 

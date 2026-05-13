@@ -62,29 +62,39 @@ const addContact = async () => {
   return (
     <div className="space-y-4">
 
-      <h2 className="text-lg font-bold">Trusted Contacts</h2>
+      <h2 className="text-2xl font-bold text-white">Trusted Contacts</h2>
 
       <div className="flex gap-2">
         <input
-          className="border p-2 rounded w-full"
+          className="w-full rounded-xl border border-cyan-500/20 bg-slate-950/60 p-3 text-white placeholder:text-slate-400"
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
         <input
-          className="border p-2 rounded w-full"
+          className="w-full rounded-xl border border-cyan-500/20 bg-slate-950/60 p-3 text-white placeholder:text-slate-400"
           placeholder="Email"
           value={email}
 onChange={(e) => setEmail(e.target.value)}
         />
 
-        <Button onClick={addContact}>Add</Button>
+        <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white" onClick={addContact}>
+          Add
+        </Button>
       </div>
 
       {contacts.map((c) => (
-        <div key={c.id} className="border p-2 rounded">
-          {c.name} — {c.email}
+        <div key={c.id} className="border border-cyan-500/20 bg-slate-950/60 text-white p-2 rounded-xl">
+          <div>
+  <p className="font-semibold text-white">
+    {c.name}
+  </p>
+
+  <p className="text-sm text-slate-400">
+    {c.email}
+  </p>
+</div>
         </div>
       ))}
     </div>

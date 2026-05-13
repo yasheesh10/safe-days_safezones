@@ -125,6 +125,8 @@ maybeLater: "Maybe Later",
         emergencySOS: "Emergency SOS",
         exploreFeatures: "Explore Features",
         checkSafeZone: "Check Safe Zone",
+        exploreIndia: "Explore India",
+safely: "Safely.",
 
         sosAlerts: "SOS Alerts",
         blockchainId: "Blockchain ID",
@@ -333,6 +335,8 @@ highRiskMove: "धोकादायक क्षेत्र. सुरक्�
         emergencySOS: "आपातकालीन SOS",
         exploreFeatures: "विशेषताएँ देखें",
         checkSafeZone: "सुरक्षित क्षेत्र देखें",
+        exploreIndia: "भारत को खोजें",
+safely: "सुरक्षित रूप से।",
 
         sosAlerts: "SOS अलर्ट",
         blockchainId: "ब्लॉकचेन आईडी",
@@ -458,6 +462,8 @@ highRiskMove: "धोकादायक क्षेत्र. सुरक्�
         emergencySOS: "आपत्कालीन SOS",
         exploreFeatures: "वैशिष्ट्ये पहा",
         checkSafeZone: "सुरक्षित क्षेत्र तपासा",
+        exploreIndia: "भारत एक्सप्लोर करा",
+safely: "सुरक्षितपणे.",
 
         sosAlerts: "SOS अलर्ट",
         blockchainId: "ब्लॉकचेन आयडी",
