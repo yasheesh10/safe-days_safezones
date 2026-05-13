@@ -388,7 +388,7 @@ return (
   <div className="flex items-center justify-between">
 
     <div>
-      <p className="text-sm font-semibold text-gray-800">
+      <p className="text-sm text-cyan-200 font-medium">
         Current Area Safety
       </p>
 

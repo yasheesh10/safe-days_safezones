@@ -309,7 +309,7 @@ if (!introDone) {
         text-white
         "
       >
-        Dashboard
+        {t("dashboardText")}
       </span>
 
       <span
@@ -492,13 +492,14 @@ to-[#020617]
   pt-20 sm:pt-24 md:justify-center md:pt-0
   text-center
   px-6
+  overflow-visible
   ">
 
     {/* Badge */}
     <div className="flex items-center gap-4 mb-6">
 
       <Badge className="px-5 py-2 text-sm bg-green-500/15 text-green-300 border border-green-400/30 backdrop-blur-xl">
-        SAFE DAYS • AI TRAVEL SAFETY
+        {t("safeDaysAiTravel")}
       </Badge>
 
 
@@ -517,20 +518,24 @@ to-[#020617]
   {t("exploreIndia")}
 </span>
 
-      <span className="
-      block
-      bg-gradient-to-r
-      from-green-400
-      via-cyan-300
-      to-blue-400
-      bg-clip-text
-      text-transparent
-      drop-shadow-[0_0_20px_rgba(34,211,238,0.25)]
-      ">
+        <span className="
+        block
+        inline-block
+        leading-[1.05]
+        pb-2
+        bg-gradient-to-r
+        from-green-400
+        via-cyan-300
+        to-blue-400
+        bg-clip-text
+        text-transparent
+        drop-shadow-[0_0_20px_rgba(34,211,238,0.25)]
+        ">
         {t("safely")}
       </span>
 
     </motion.h1>
+    <div className="h-4" />
 
     {/* Subtitle */}
     <motion.p
@@ -539,8 +544,7 @@ to-[#020617]
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 0.4 }}
     >
-      Real-time alerts, AI-powered safety intelligence,
-      and secure travel experiences across every destination.
+      {t("realTimeAlertsDesc")}
     </motion.p>
 
     {/* Buttons */}
@@ -565,7 +569,7 @@ border border-cyan-300/30
         onClick={() => navigate("/emergency-sos")}
       >
         <AlertTriangle className="mr-2 h-5 w-5" />
-        Emergency SOS
+        {t("emergencySosTitle")}
       </Button>
 
       <Button
@@ -621,9 +625,9 @@ onClick={() => navigate("/safezone")}
     >
 
       {[
-        ["250+", "SOS Alerts"],
-        ["500+", "Safe Zones"],
-        ["750+", "AI Assistant"],
+        ["250+", t("sosAlertsLabel")],
+        ["500+", t("safeZonesLabel")],
+        ["750+", t("aiAssistantLabel")],
       ].map(([number, label]) => (
 
         <div
@@ -669,10 +673,10 @@ onClick={() => navigate("/safezone")}
     {/* Heading */}
     <div className="text-center mb-14">
       <h2 className="text-2xl md:text-4xl font-bold mb-3">
-        Explore Safe Destinations
+        {t("exploreSafeDestinations")}
       </h2>
       <p className="text-white/70 max-w-3xl mx-auto">
-        Discover cities with real-time safety insights, alerts, and travel intelligence.
+        {t("discoverCities")}
       </p>
     </div>
 
@@ -681,26 +685,26 @@ onClick={() => navigate("/safezone")}
       
       {[
         {
-          name: "Mumbai",
-          safety: "High Safety",
+          name: t("mumbai"),
+          safety: t("highSafety"),
           color: "green",
           img: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f",
         },
         {
-          name: "Goa",
-          safety: "Moderate Safety",
+          name: t("goa"),
+          safety: t("moderateSafety"),
           color: "yellow",
           img: "https://images.unsplash.com/photo-1587922546307-776227941871",
         },
         {
-          name: "Delhi",
-          safety: "Watch Zones",
+          name: t("delhi"),
+          safety: t("watchZones"),
           color: "red",
           img: "https://images.unsplash.com/photo-1587474260584-136574528ed5",
         },
         {
-          name: "Northeast",
-          safety: "Safe & Scenic",
+          name: t("northeastLabel"),
+          safety: t("safeScenic"),
           color: "green",
           img: "https://images.unsplash.com/photo-1625654325562-762dcec9e6f2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         },
@@ -729,7 +733,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition" />
 
           {/* Content */}
-          <div className="absolute bottom-20 left-4">
+          <div className="absolute bottom-6 left-4">
             <h3 className="text-xl font-semibold">{place.name}</h3>
 
             <span
@@ -788,13 +792,13 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
       transition={{ duration: 1 }}
     >
       <span className="bg-gradient-to-b from-white via-white to-cyan-300 text-transparent bg-clip-text">
-        India,
+        {t("India,")}
       </span>
 
       <br />
 
       <span className="text-white">
-        Protected.
+        {t("protected")}
       </span>
     </motion.h2>
   </div>
@@ -810,11 +814,11 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
     </div>
 
     <h3 className="text-2xl font-bold mb-4">
-      AI Safe Zones
+      {t("aiSafeZones")}
     </h3>
 
     <p className="text-white/70 leading-relaxed">
-      Real-time intelligence helps tourists avoid unsafe areas instantly.
+      {t("aiSafeZonesDesc")}
     </p>
   </motion.div>
 
@@ -829,11 +833,11 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
     </div>
 
     <h3 className="text-2xl font-bold mb-4">
-      Emergency SOS
+      {t("emergencySosTitle")}
     </h3>
 
     <p className="text-white/70 leading-relaxed">
-      One-tap emergency protection connected to trusted contacts and authorities.
+      {t("emergencyProtectionDesc")}
     </p>
   </motion.div>
 
@@ -848,11 +852,11 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
     </div>
 
     <h3 className="text-2xl font-bold mb-4">
-      Cultural Discovery
+      {t("culturalDiscovery")}
     </h3>
 
     <p className="text-white/70 leading-relaxed">
-      Explore monuments, traditions, dance, food, and authentic experiences safely.
+      {t("culturalDiscoveryDesc")}
     </p>
   </motion.div>
 
@@ -939,7 +943,7 @@ className="group relative overflow-hidden
 bg-white/5
 backdrop-blur-xl
 border border-white/10
-rounded-2xl p-6
+rounded-2xl p-2
 transition-all duration-500
 hover:scale-105
 hover:border-cyan-400/40

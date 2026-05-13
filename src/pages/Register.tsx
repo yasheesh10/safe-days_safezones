@@ -13,7 +13,7 @@ import {
   connectWallet,
   registerOnBlockchain
 } from "@/blockchain";
-
+import { useTranslation } from "react-i18next";
 const Register = () => {
     // ✅ Fake Blockchain ID Generator
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 const [useBlockchain, setUseBlockchain] = useState(false);
-
+const { t } = useTranslation();
   const [formData, setFormData] = useState({
   name: "",
   email: "",
@@ -210,9 +210,9 @@ if (profileError) {
         {/* Card */}
         <Card className="border-0 bg-white/5 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
           <CardHeader className="text-center pb-2">
-            <CardTitle className="text-2xl text-white">Create Account</CardTitle>
+            <CardTitle className="text-2xl text-white">{t("createAccount")}</CardTitle>
             <CardDescription className="text-white/70">
-              Register to access the safety ecosystem
+              {t("registerSafetyEcosystem")}
             </CardDescription>
           </CardHeader>
 
@@ -220,12 +220,12 @@ if (profileError) {
             <form onSubmit={handleRegister} className="space-y-5">
               {/* Name */}
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-white/90">Full Name</Label>
+                <Label htmlFor="name" className="text-white/90">{t("fullName")}</Label>
                 <div className="relative">
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Enter your full name"
+                    placeholder={t("enterFullName")}
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-emerald-400"
@@ -237,12 +237,12 @@ if (profileError) {
 
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white/90">Email Address</Label>
+                <Label htmlFor="email" className="text-white/90">{t("emailAddress")}</Label>
                 <div className="relative">
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email address"
+                    placeholder={t("enterEmailAddress")}
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus-visible:ring-emerald-400"
@@ -254,14 +254,14 @@ if (profileError) {
 {/* Password */}
 <div className="space-y-2">
   <Label htmlFor="password" className="text-white/90">
-    Password
+    {t("password")}
   </Label>
 
   <div className="relative">
     <Input
       id="password"
       type={showPassword ? "text" : "password"}
-      placeholder="Enter password"
+      placeholder={t("enterPassword")}
       value={formData.password}
       onChange={(e) =>
         handleInputChange("password", e.target.value)
@@ -289,14 +289,14 @@ if (profileError) {
 {/* Confirm Password */}
 <div className="space-y-2">
   <Label htmlFor="confirmPassword" className="text-white/90">
-    Confirm Password
+    {t("confirmPassword")}
   </Label>
 
   <div className="relative">
     <Input
       id="confirmPassword"
       type={showConfirmPassword ? "text" : "password"}
-      placeholder="Confirm password"
+      placeholder={t("confirmPasswordPlaceholder")}
       value={formData.confirmPassword}
       onChange={(e) =>
         handleInputChange("confirmPassword", e.target.value)
@@ -330,7 +330,7 @@ if (profileError) {
   />
 
   <label className="text-white text-sm">
-    Register with Blockchain (MetaMask)
+    {t("registerBlockchain")}
   </label>
 </div>
               {/* Register Button */}
@@ -346,19 +346,19 @@ if (profileError) {
 }
 
               >
-                {isLoading ? "Creating Account..." : "Register"}
+                {isLoading ? t("creatingAccount") : t("register")}
               </Button>
             </form>
 
             {/* Footer Links */}
             <div className="mt-6 text-center">
-              <p className="text-sm text-white/60">Already have an account?</p>
+              <p className="text-sm text-white/60">{t("alreadyAccount")}</p>
               <div className="flex items-center justify-center gap-4">
                 <Button variant="link" className="text-emerald-300 hover:text-emerald-200" onClick={() => navigate("/login")}>
-                  Login here
+                 {t("loginHere")}
                 </Button>
                 <Button variant="link" className="text-white/70 hover:text-white" onClick={() => navigate("/")}>
-                  ← Back to Homepage
+                  ← {t("backToHomepage")}
                 </Button>
               </div>
             </div>
@@ -372,7 +372,7 @@ if (profileError) {
           <div className="bg-zinc-900 rounded-xl p-6 w-[90%] max-w-md text-center shadow-xl border border-emerald-500">
 
             <h2 className="text-xl font-bold text-white mb-2">
-              Your Blockchain ID
+             {t("yourBlockchainId")}
             </h2>
 
             <p className="text-emerald-400 font-mono text-lg break-all mb-3">
@@ -380,7 +380,7 @@ if (profileError) {
             </p>
 
             <p className="text-sm text-gray-300 mb-4">
-              This blockchain wallet address is securely linked to your SAFE DAYS identity and stored on Polygon blockchain.
+              {t("blockchainLinked")}
             </p>
 
             <div className="flex gap-3">
@@ -388,10 +388,10 @@ if (profileError) {
                 className="flex-1"
                 onClick={() => {
                   navigator.clipboard.writeText(generatedBlockchainId);
-                  alert("Copied!");
+                  alert(t("copied"));
                 }}
               >
-                Copy ID
+                {t("copyId")}
               </Button>
 
               <Button
@@ -402,7 +402,7 @@ if (profileError) {
                   navigate("/login");
                 }}
               >
-                Go To Login
+                {t("goToLogin")}
               </Button>
             </div>
 

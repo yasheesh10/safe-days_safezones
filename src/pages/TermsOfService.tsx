@@ -18,19 +18,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-
-const sections = [
-  { id: "acceptance", title: "Acceptance of Terms", icon: Gavel },
-  { id: "users", title: "User Responsibilities", icon: Users },
-  { id: "prohibited", title: "Prohibited Activities", icon: AlertTriangle },
-  { id: "emergency", title: "Emergency Services", icon: Phone },
-  { id: "liability", title: "Liability & Disclaimers", icon: FileWarning },
-  { id: "termination", title: "Termination", icon: ScrollText },
-  { id: "contact", title: "Contact Information", icon: Mail },
-];
+import { useTranslation } from "react-i18next";
 
 const TermsOfService = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const sections = [
+    { id: "acceptance", title: t("acceptanceTerms"), icon: Gavel },
+    { id: "users", title: t("userResponsibilities"), icon: Users },
+    { id: "prohibited", title: t("prohibitedActivities"), icon: AlertTriangle },
+    { id: "emergency", title: t("emergencyServices"), icon: Phone },
+    { id: "liability", title: t("liabilityDisclaimers"), icon: FileWarning },
+    { id: "termination", title: t("termination"), icon: ScrollText },
+    { id: "contact", title: t("contactInformation"), icon: Mail },
+  ];
 
   const NavItem = ({ id, title, Icon }: any) => (
     <a
@@ -106,7 +108,7 @@ const TermsOfService = () => {
               "
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
-              Back
+              {t("back")}
             </Button>
 
             <div className="flex items-center gap-3">
@@ -137,7 +139,7 @@ const TermsOfService = () => {
               "
             >
               <BookOpen className="h-3.5 w-3.5" />
-              Legal Documentation
+              {t("legalDocumentation")}
             </div>
 
             <h1
@@ -148,19 +150,18 @@ const TermsOfService = () => {
                 tracking-tight
               "
             >
-              Terms of{" "}
+              {t("termsOf")}{" "}
               <span className="text-cyan-300">
-                Service
+                {t("service")}
               </span>
             </h1>
 
             <p className="mt-5 text-xl text-white/70 leading-relaxed">
-              These terms govern the use of SAFE DAYS and outline
-              responsibilities, safety policies, and platform usage conditions.
+              {t("termsSubtitle")}
             </p>
 
             <p className="text-sm text-white/40 mt-4">
-              Last updated: February 2026
+              {t("termsUpdated")}
             </p>
           </div>
         </div>
@@ -181,7 +182,7 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-base text-white">
-                Contents
+                {t("contents")}
               </CardTitle>
             </CardHeader>
 
@@ -207,14 +208,12 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                Acceptance of Terms
+                {t("acceptanceTerms")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 leading-relaxed">
-              By accessing or using SAFE DAYS, you agree to comply
-              with these Terms of Service. If you do not agree,
-              please discontinue use of the platform.
+              {t("acceptanceDesc")}
             </CardContent>
           </Card>
 
@@ -230,16 +229,16 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                User Responsibilities
+                {t("userResponsibilities")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 space-y-3">
               <ul className="list-disc pl-5 space-y-2">
-                <li>Provide accurate account information</li>
-                <li>Keep login credentials secure</li>
-                <li>Use SOS features responsibly</li>
-                <li>Follow platform safety instructions</li>
+                <li>{t("accurateInfo")}</li>
+                <li>{t("secureCredentials")}</li>
+                <li>{t("responsibleSOS")}</li>
+                <li>{t("followSafety")}</li>
               </ul>
             </CardContent>
           </Card>
@@ -256,16 +255,16 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                Prohibited Activities
+                {t("prohibitedActivities")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70">
               <ul className="list-disc pl-5 space-y-2">
-                <li>False emergency reports</li>
-                <li>Unauthorized system access</li>
-                <li>Malicious activity or hacking attempts</li>
-                <li>Harassment, abuse, or misuse of services</li>
+                <li>{t("falseReports")}</li>
+                <li>{t("unauthorizedAccess")}</li>
+                <li>{t("maliciousActivity")}</li>
+                <li>{t("harassmentMisuse")}</li>
               </ul>
             </CardContent>
           </Card>
@@ -282,15 +281,12 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                Emergency Services
+                {t("emergencyServices")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 leading-relaxed">
-              SOS features may share your location with emergency
-              responders and trusted contacts during active incidents.
-              SAFE DAYS assists emergency coordination but does not
-              guarantee response times or outcomes.
+              {t("emergencyDesc")}
             </CardContent>
           </Card>
 
@@ -306,15 +302,12 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                Liability & Disclaimers
+                {t("liabilityDisclaimers")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 leading-relaxed">
-              SAFE DAYS is provided “as is” without guarantees of
-              uninterrupted service. We are not responsible for
-              losses, damages, or disruptions caused by external
-              factors or emergency circumstances.
+              {t("liabilityDesc")}
             </CardContent>
           </Card>
 
@@ -330,13 +323,12 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                Termination
+                {t("termination")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 leading-relaxed">
-              We reserve the right to suspend or terminate accounts
-              that violate platform policies or misuse emergency services.
+              {t("terminationDesc")}
             </CardContent>
           </Card>
 
@@ -352,7 +344,7 @@ const TermsOfService = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                Contact Information
+                {t("contactInformation")}
               </CardTitle>
             </CardHeader>
 
@@ -374,7 +366,7 @@ const TermsOfService = () => {
                 <Phone className="h-5 w-5 text-cyan-300" />
 
                 <span>
-                  Emergency Hotline:
+                  {t("emergencyHotline")}
                   <span className="text-red-400 font-semibold ml-2">
                     112
                   </span>
@@ -386,7 +378,7 @@ const TermsOfService = () => {
                 <ScrollText className="h-5 w-5 text-cyan-300" />
 
                 <span>
-                  Support Availability: 24/7 Emergency Assistance
+                  {t("supportAvailability")}
                 </span>
               </div>
             </CardContent>
@@ -402,19 +394,19 @@ const TermsOfService = () => {
           </div>
 
           <p className="text-white/60 mb-5">
-            AI-powered tourist safety platform for secure travel.
+            {t("smartSafety")}
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-6 text-sm text-white/60">
             <div>
-              Emergency:
+              {t("emergencyNumber")}
               <span className="text-red-400 font-semibold ml-2">
                 112
               </span>
             </div>
 
             <div>
-              Tourist Helpline:
+              {t("touristHelpline")}
               <span className="text-cyan-300 font-semibold ml-2">
                 1363
               </span>
@@ -422,7 +414,7 @@ const TermsOfService = () => {
           </div>
 
           <p className="mt-8 text-xs text-white/40">
-            © 2026 SAFE DAYS. All rights reserved.
+            {t("privacyCopyright")}
           </p>
         </div>
       </footer>

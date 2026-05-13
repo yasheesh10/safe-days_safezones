@@ -504,7 +504,9 @@ if (error) {
 
           <div className="flex items-center gap-2">
             <Shield className="text-green-600" />
-            <h1 className="text-xl font-bold">{t("touristSafetyDashboard")}</h1>
+            <h1 className="text-xl font-bold text-white">
+  {t("touristSafetyDashboard")}
+</h1>
           </div>
           <Button variant="outline" onClick={() => navigate(-1)}>
             ← {t("back")}
@@ -514,7 +516,8 @@ if (error) {
 <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         {/* LEFT */}
-        <div className="lg:col-span-3 space-y-6 self-start">
+        {/* RIGHT */}
+<div className="lg:col-span-3 space-y-6 self-start flex flex-col">
           <Card className="h-full">
             <CardHeader>
               <CardTitle className="text-red-600 flex gap-2">
@@ -535,29 +538,6 @@ if (error) {
 >
   📞 Call Police
 </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("blockchainSafetyId")}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {!showId ? (
-                <><Label>{t("enterLast4Digits")}</Label>
-                  <Input value={last4} onChange={(e) => setLast4(e.target.value)} />
-                  <Button onClick={handleRevealId}>
-                    <Eye className="mr-2 h-4 w-4" /> {t("revealId")}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <p className="font-mono text-green-600">{storedBlockchainId}</p>
-                  <Button variant="outline" onClick={() => setShowId(false)}>
-                    <EyeOff className="mr-2 h-4 w-4" /> {t("hide")}
-                  </Button>
-                </>
-              )}
             </CardContent>
           </Card>
 
@@ -595,18 +575,52 @@ if (error) {
     </CardContent>
   </Card>
 )}
+<Card className="overflow-hidden bg-[#08113a] border border-cyan-500/20">
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="w-full h-[210px] object-cover scale-[1.35] -translate-x-1.8"
+  >
+    <source src="/gpt.mp4" type="video/mp4" />
+  </video>
+</Card>
         </div>
 
-        {/* MIDDLE */}
-        <div className="lg:col-span-6 space-y-6">
-{userLocation && (
-  <GeofencingMonitor
-    latitude={userLocation.latitude}
-    longitude={userLocation.longitude}
-  />
-)}
-</div>
+{/* MIDDLE */}
+<div className="lg:col-span-6 space-y-6">
 
+  {userLocation && (
+    <GeofencingMonitor
+      latitude={userLocation.latitude}
+      longitude={userLocation.longitude}
+    />
+  )}
+
+  <Card>
+    <CardHeader className="pb-2 pt-5">
+      <CardTitle>🛡 Tourist Safety Tips</CardTitle>
+    </CardHeader>
+
+    <CardContent className="grid md:grid-cols-3 gap-1 pt-2 pb-3">
+
+      <div className="p-2 rounded-xl bg-slate-900/80 border border-cyan-500/20 text-white text-sm leading-5">
+        🌙 Avoid isolated areas late at night.
+      </div>
+
+      <div className="p-2 rounded-xl bg-slate-900/80 border border-cyan-500/20 text-white text-sm leading-5">
+        📍 Share your live location with trusted contacts.
+      </div>
+
+      <div className="p-2 rounded-xl bg-slate-900/80 border border-cyan-500/20 text-white text-sm leading-5">
+        🚖 Use verified transport and tourist services.
+      </div>
+
+    </CardContent>
+  </Card>
+
+</div>
 
         {/* RIGHT */}
 <div className="lg:col-span-3 space-y-6 self-start">
@@ -673,17 +687,24 @@ if (error) {
             </CardContent>
           </Card>
           <TrustedContacts />
-          <Card>
+          <Card className="flex-1">
   <CardHeader>
     <CardTitle className="flex gap-2">
       <Bell /> {t("safetyAlerts")}
     </CardTitle>
   </CardHeader>
-  <CardContent>{t("noActiveAlerts")}</CardContent>
+
+  <CardContent className="flex flex-col justify-center h-full">
+    {t("noActiveAlerts")}
+  </CardContent>
 </Card>
-        </div>
- {restaurants.length > 0 && (
-  <div className="lg:col-span-12">
+
+        </div>   
+        
+      </div>
+      
+       {restaurants.length > 0 && (
+<div className="max-w-7xl mx-auto px-6 pb-8">
   <Card>
     <CardHeader>
       <CardTitle>🍽 {t("nearbyRestaurants")}</CardTitle>
@@ -711,11 +732,9 @@ if (error) {
     </CardContent>
   </Card>
   </div>
-)}       
-        
-      </div>
-      
+)}    
     </div>
+    
   );
 };
 

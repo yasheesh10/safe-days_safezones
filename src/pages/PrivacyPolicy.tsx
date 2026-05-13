@@ -16,9 +16,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div
@@ -75,7 +77,7 @@ const PrivacyPolicy = () => {
               "
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>Back</span>
+              <span>{t("back")}</span>
             </Button>
 
             <div className="flex items-center space-x-3">
@@ -86,8 +88,6 @@ const PrivacyPolicy = () => {
               </span>
             </div>
           </div>
-
-          
         </div>
       </header>
 
@@ -117,17 +117,18 @@ const PrivacyPolicy = () => {
               tracking-tight
             "
           >
-            Privacy{" "}
-            <span className="text-cyan-300">Policy</span>
+            {t("privacy")}{" "}
+            <span className="text-cyan-300">
+              {t("policy")}
+            </span>
           </h1>
 
           <p className="text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
-            Learn how SAFE DAYS collects, protects, and securely manages
-            your information while delivering safer travel experiences.
+            {t("privacySubtitle")}
           </p>
 
           <p className="text-sm text-white/40 mt-5">
-            Last updated: September 2025
+            {t("lastUpdated")}
           </p>
         </div>
 
@@ -144,17 +145,17 @@ const PrivacyPolicy = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Users className="h-5 w-5 text-cyan-300" />
-                Information We Collect
+                {t("infoCollect")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 space-y-4">
               <ul className="list-disc pl-6 space-y-2">
-                <li>Full name and email address</li>
-                <li>Trusted emergency contact details</li>
-                <li>Live location data for SOS & safety services</li>
-                <li>Device and browser information</li>
-                <li>Platform usage and interaction logs</li>
+                <li>{t("fullNameEmail")}</li>
+                <li>{t("trustedContacts")}</li>
+                <li>{t("liveLocationData")}</li>
+                <li>{t("deviceBrowser")}</li>
+                <li>{t("platformLogs")}</li>
               </ul>
             </CardContent>
           </Card>
@@ -171,17 +172,17 @@ const PrivacyPolicy = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Lock className="h-5 w-5 text-cyan-300" />
-                How We Use Your Information
+                {t("howUseInfo")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70">
               <ul className="list-disc pl-6 space-y-2">
-                <li>Provide emergency SOS services</li>
-                <li>Enable live safety monitoring and alerts</li>
-                <li>Manage user accounts securely</li>
-                <li>Improve platform performance and reliability</li>
-                <li>Send important travel safety notifications</li>
+                <li>{t("provideSOS")}</li>
+                <li>{t("enableMonitoring")}</li>
+                <li>{t("manageAccounts")}</li>
+                <li>{t("improvePlatform")}</li>
+                <li>{t("travelNotifications")}</li>
               </ul>
             </CardContent>
           </Card>
@@ -198,19 +199,17 @@ const PrivacyPolicy = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Database className="h-5 w-5 text-cyan-300" />
-                Data Storage & Security
+                {t("dataSecurity")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 space-y-4 leading-relaxed">
               <p>
-                SAFE DAYS uses secure cloud infrastructure, encryption,
-                and controlled access systems to protect user information.
+                {t("secureInfrastructure")}
               </p>
 
               <p>
-                Sensitive location data is used only during active
-                safety monitoring and emergency response scenarios.
+                {t("sensitiveLocation")}
               </p>
             </CardContent>
           </Card>
@@ -227,19 +226,17 @@ const PrivacyPolicy = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-white">
                 <Globe className="h-5 w-5 text-cyan-300" />
-                Data Sharing
+                {t("dataSharing")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 space-y-4 leading-relaxed">
               <p>
-                SAFE DAYS does not sell or distribute personal user data.
+                {t("noSellData")}
               </p>
 
               <p>
-                Information may only be shared with emergency responders,
-                trusted contacts, or legal authorities when required
-                during active emergency situations.
+                {t("shareEmergency")}
               </p>
             </CardContent>
           </Card>
@@ -255,16 +252,16 @@ const PrivacyPolicy = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                User Rights
+                {t("userRights")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70">
               <ul className="list-disc pl-6 space-y-2">
-                <li>Access your personal information</li>
-                <li>Request data corrections</li>
-                <li>Request deletion of stored information</li>
-                <li>Withdraw consent for optional services</li>
+                <li>{t("accessInfo")}</li>
+                <li>{t("dataCorrection")}</li>
+                <li>{t("deleteInfo")}</li>
+                <li>{t("withdrawConsent")}</li>
               </ul>
             </CardContent>
           </Card>
@@ -280,13 +277,13 @@ const PrivacyPolicy = () => {
           >
             <CardHeader>
               <CardTitle className="text-white">
-                Contact Us
+                {t("contactUs")}
               </CardTitle>
             </CardHeader>
 
             <CardContent className="text-white/70 space-y-5">
               <p>
-                For privacy-related questions or support:
+                {t("privacySupport")}
               </p>
 
               <div className="flex items-center gap-3">
@@ -304,7 +301,7 @@ const PrivacyPolicy = () => {
                 <Phone className="h-5 w-5 text-cyan-300" />
 
                 <span>
-                  Emergency Helpline:
+                  {t("emergencyHelpline")}
                   <span className="text-red-400 font-semibold ml-2">
                     112
                   </span>
@@ -321,19 +318,19 @@ const PrivacyPolicy = () => {
           </div>
 
           <p className="text-white/60 mb-5">
-            AI-powered tourist safety platform for secure travel.
+            {t("smartSafety")}
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-6 text-sm text-white/60">
             <div>
-              Emergency:
+              {t("emergencyNumber")}
               <span className="text-red-400 font-semibold ml-2">
                 112
               </span>
             </div>
 
             <div>
-              Tourist Helpline:
+              {t("touristHelpline")}
               <span className="text-cyan-300 font-semibold ml-2">
                 1363
               </span>
@@ -341,7 +338,7 @@ const PrivacyPolicy = () => {
           </div>
 
           <p className="mt-8 text-xs text-white/40">
-            © 2026 SAFE DAYS. All rights reserved.
+            {t("privacyCopyright")}
           </p>
         </footer>
       </div>

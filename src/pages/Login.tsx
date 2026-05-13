@@ -291,12 +291,12 @@ if (profile.role !== selectedRole) {
 >
                 <div className="space-y-2">
   <Label className="text-white/90">
-    Email
+    {t("email")}
   </Label>
 
   <Input
     type="email"
-    placeholder="Enter email"
+    placeholder={t("enterEmail")}
     value={identifier}
     onChange={(e) =>
       setIdentifier(e.target.value)
@@ -314,7 +314,7 @@ if (profile.role !== selectedRole) {
 
     <Input
       type={showPassword ? "text" : "password"}
-      placeholder="Enter password"
+      placeholder= {t("password")}
       value={password}
       onChange={(e) =>
         setPassword(e.target.value)
@@ -346,13 +346,15 @@ if (profile.role !== selectedRole) {
   className="h-11 w-full bg-blue-500 text-white hover:bg-blue-600"
   disabled={isLoading}
 >
-  {isLoading ? "Logging in..." : "Login Normally"}
+  {isLoading ? t("loggingIn") : t("loginNormally")}
 </Button>
                 <Button
                   type="submit"
                   className="h-11 w-full bg-emerald-500 text-white transition hover:bg-emerald-600"
                   disabled={isLoading}
-                >{isLoading ? "Connecting Wallet..." : "Login with MetaMask"}
+                >{isLoading
+  ? t("connectingWallet")
+  : t("loginWithMetaMask")}
 
                 </Button>
               </form>
