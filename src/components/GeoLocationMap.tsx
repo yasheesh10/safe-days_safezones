@@ -309,7 +309,7 @@ const center: LatLngTuple = pos ?? defaultCenter;
       {/* ---------- status badge ---------- */}
       <div className="absolute z-[1000] left-3 top-3">
         {nearestZone && nearestDistance !== null && (
-  <div className="mt-2 px-3 py-2 rounded-lg bg-slate-900/90 border border-cyan-500/20 backdrop-blur-xltext-sm shadow">
+  <div className="mt-2 px-3 py-2 rounded-lg bg-slate-900/90 text-white border border-cyan-500/20 backdrop-blur-xl text-sm shadow">
     📍 Nearest: <strong>{nearestZone.name}</strong><br />
     Distance:{" "}
     {nearestDistance < 1
