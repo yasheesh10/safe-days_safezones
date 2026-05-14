@@ -388,11 +388,11 @@ return (
   <div className="flex items-center justify-between">
 
     <div>
-      <p className="text-sm text-cyan-200 font-medium">
+      <p className="text-sm text-white font-semibold">
         Current Area Safety
       </p>
 
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-slate-200">
         Live AI geofencing analysis
       </p>
     </div>

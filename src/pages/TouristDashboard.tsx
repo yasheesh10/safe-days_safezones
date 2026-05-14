@@ -518,7 +518,7 @@ if (error) {
         {/* LEFT */}
         {/* RIGHT */}
 <div className="lg:col-span-3 space-y-6 self-start flex flex-col">
-          <Card className="h-full">
+          <Card className="h-full bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
             <CardHeader>
               <CardTitle className="text-red-600 flex gap-2">
                 <AlertTriangle />{t("emergencySOS")}
@@ -541,7 +541,7 @@ if (error) {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
             <CardHeader>
               <CardTitle>{t("accountStatus")}</CardTitle>
             </CardHeader>
@@ -550,7 +550,7 @@ if (error) {
             </CardContent>
           </Card>
           {weather?.main && (
-  <Card>
+  <Card className="bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
     <CardHeader>
       <CardTitle>🌦 {t("weatherNearby")}</CardTitle>
       <CardDescription>{weather.name}</CardDescription>
@@ -561,7 +561,7 @@ if (error) {
   {Math.round(weather?.main?.temp)}°C
 </div>
 
-<div className="text-sm capitalize text-muted-foreground min-w-[120px]">
+<div className="text-sm capitalize text-slate-300 min-w-[120px]">
   {weather?.weather?.[0]?.description}
 </div>
 
@@ -598,7 +598,7 @@ if (error) {
     />
   )}
 
-  <Card>
+  <Card className="bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
     <CardHeader className="pb-2 pt-5">
       <CardTitle>🛡 Tourist Safety Tips</CardTitle>
     </CardHeader>
@@ -625,7 +625,7 @@ if (error) {
         {/* RIGHT */}
 <div className="lg:col-span-3 space-y-6 self-start">
 
-          <Card className="h-full">
+          <Card className="h-full bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
             <CardHeader>
               <CardTitle className="flex gap-2">
                 <FileText /> {t("reportIncident")}
@@ -657,7 +657,7 @@ if (error) {
               </Button>
             </CardContent>
           </Card>
-<Card>
+           <Card className="bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
             <CardHeader>
               <CardTitle className="flex gap-2">
                 <MapPin /> {t("nearbySafetyServices")}
@@ -667,19 +667,19 @@ if (error) {
               
 <Button
   variant="outline"
-  className="w-full"
+  className="w-full bg-slate-900 border border-cyan-500/20 text-white hover:bg-slate-800"
   onClick={() => openNearby("police station")}
 >{t("policeStation")}
 </Button>
 <Button
   variant="outline"
-  className="w-full"
+  className="w-full bg-slate-900 border border-cyan-500/20 text-white hover:bg-slate-800"
   onClick={() => openNearby("hospital")}
 >{t("hospital")}
 </Button>
 <Button
   variant="outline"
-  className="w-full"
+  className="w-full bg-slate-900 border border-cyan-500/20 text-white hover:bg-slate-800"
   onClick={() => openNearby("tourist help desk")}
 >{t("touristHelpDesk")}
 </Button>
@@ -687,7 +687,7 @@ if (error) {
             </CardContent>
           </Card>
           <TrustedContacts />
-          <Card className="flex-1">
+          <Card className="flex-1 bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
   <CardHeader>
     <CardTitle className="flex gap-2">
       <Bell /> {t("safetyAlerts")}
@@ -705,7 +705,7 @@ if (error) {
       
        {restaurants.length > 0 && (
 <div className="max-w-7xl mx-auto px-6 pb-8">
-  <Card>
+  <Card className="bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl">
     <CardHeader>
       <CardTitle>🍽 {t("nearbyRestaurants")}</CardTitle>
       <CardDescription>{t("basedOnYourLocation")}</CardDescription>
@@ -724,7 +724,7 @@ if (error) {
           }
         >
           <p className="font-medium">{place.properties.name}</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-slate-300">
             {place.properties.address_line2}
           </p>
         </div>
