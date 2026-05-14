@@ -430,11 +430,14 @@ return (
 
 </div>
 
-      <div className="rounded-xl overflow-hidden border">
+      <div className="rounded-2xl overflow-hidden border border-cyan-500/20 bg-slate-900 relative">
       <MapContainer
         center={[location.latitude, location.longitude]}
         zoom={13}
-        style={{ height: "350px", width: "100%" }}
+        style={{
+        height: window.innerWidth < 640 ? "500px" : "350px",
+        width: "100%",
+        }}
       >
       
       <RecenterMap
@@ -459,10 +462,10 @@ return (
       </MapContainer>
       </div>
 
-<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
 
   <Button
-    className="w-full"
+    className="w-full py-6 text-base rounded-xl"
     variant={isTracking ? "destructive" : "default"}
     onClick={() => setIsTracking(!isTracking)}
   >

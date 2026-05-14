@@ -305,9 +305,10 @@ if (city === "northeast") {
 const center: LatLngTuple = pos ?? defaultCenter;
 
   return (
-    <div className="relative w-full h-[85vh] rounded-xl overflow-hidden">
+    <div className="relative w-full h-[70vh] sm:h-[85vh] rounded-xl overflow-hidden">
       {/* ---------- status badge ---------- */}
-      <div className="absolute z-[1000] left-16 top-4">
+      <div
+  className="absolute z-[1000] left-2 right-2 top-24 sm:left-16 sm:right-auto sm:top-4 max-w-[320px] ">
         {nearestZone && nearestDistance !== null && (
   <div className="mt-2 px-3 py-2 rounded-lg bg-slate-900/90 text-white border border-cyan-500/20 backdrop-blur-xl text-sm shadow">
     📍 Nearest: <strong>{nearestZone.name}</strong><br />
@@ -318,29 +319,29 @@ const center: LatLngTuple = pos ?? defaultCenter;
   </div>
 )}
         {errorMsg ? (
-          <div className="px-3 py-2 rounded-lg bg-rose-100 text-rose-900 text-sm shadow">
+          <div className="px-3 py-2 text-sm sm:text-base rounded-xl bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl">
             {errorMsg}
           </div>
           ) : status === "landmark" ? (
-  <div className="px-3 py-2 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-xl text-sm shadow">
+  <div className="px-3 py-2 text-sm sm:text-base rounded-xl bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl">
     📍 Tourist Landmark Nearby{" "}
     {accuracy && (
       <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
     )}
   </div>
         ) : status === "unknown" ? (
-          <div className="px-3 py-2 rounded-lg bg-slate-900/90 text-slate-300 border border-cyan-500/20 backdrop-blur-xl text-sm shadow">
+          <div className="px-3 py-2 text-sm sm:text-base rounded-xl bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl">
             Fetching location…
           </div>
         ) : status === "inside" ? (
-          <div className="px-3 py-2 rounded-lg bg-slate-900/90 text-white border border-emerald-400/30 backdrop-blur-xl text-sm shadow">
+          <div className="px-3 py-2 text-sm sm:text-base rounded-xl bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl">
             ✅ Inside Safe Zone{" "}
             {accuracy && (
               <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
             )}
           </div>
         ) : (
-          <div className="px-3 py-2 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 backdrop-blur-xl text-sm shadow">
+          <div className="px-3 py-2 text-sm sm:text-base rounded-xl bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl">
             ⚠️ Outside Safe Zone{" "}
             {accuracy && (
               <span className="opacity-70 ml-2">(±{Math.round(accuracy)} m)</span>
@@ -353,24 +354,25 @@ const center: LatLngTuple = pos ?? defaultCenter;
 
 
       {/* ---------- controls ---------- */}
-      <div className="absolute z-[1000] right-3 top-3 flex gap-2">
+      <div
+  className="absolute z-[1000] top-3 left-14 right-2 flex flex-wrap gap-2 items-start max-w-[72%] sm:max-w-none sm:left-auto">
         <button
           onClick={locateOnce}
-          className="px-3 py-2 rounded-lg bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl"
+          className="px-2.5 py-1.5 text-xs sm:text-sm rounded-xl bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl"
           title="Locate me once"
         >
           📍 Locate me
         </button>
         <button
           onClick={() => pos && mapRef.current?.flyTo(pos, 17)}
-          className="px-3 py-2 rounded-lg bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl"
+          className="px-2.5 py-1.5 text-xs sm:text-sm rounded-xl bg-slate-900/80 border border-cyan-400/30 text-white hover:bg-slate-800/70 backdrop-blur-xl"
           title="Recenter"
         >
           🎯 Recenter
         </button>
         <button
           onClick={toggleWatch}
-          className={`px-3 py-2 rounded-lg shadow text-sm ${
+          className={`px-2.5 py-1.5 rounded-xl shadow text-xs sm:text-sm ${
             watching ? "bg-green-600 text-white" : "bg-slate-900/90 border border-cyan-500/20 backdrop-blur-xl hover:bg-slate-800"
           }`}
           title="Start/stop live tracking"

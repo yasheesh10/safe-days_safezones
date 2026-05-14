@@ -755,6 +755,30 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
   </div>
 </motion.section>
 
+{/* Smooth Transition */}
+<div className="relative h-32 overflow-hidden -mb-8">
+
+  {/* soft cyan glow */}
+  <div className="
+  absolute inset-0
+  bg-gradient-to-b
+  from-transparent
+  via-cyan-500/10
+  to-slate-950
+  blur-3xl
+  " />
+
+  {/* dark fade */}
+  <div className="
+  absolute inset-0
+  bg-gradient-to-b
+  from-[#020617]
+  via-[#020617]/80
+  to-transparent
+  " />
+
+</div>
+
 {/* Cinematic Storytelling Section */}
 <section className="relative min-h-screen overflow-hidden">
 
@@ -771,7 +795,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
   {/* Dark Overlay */}
  <>
   {/* Dark cinematic layer */}
-  <div className="absolute inset-0 bg-black/60" />
+  <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/30 via-black/50 to-black/70" />
 
   {/* Blue cinematic tint */}
   <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/20 via-transparent to-black/70" />
