@@ -759,7 +759,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
 
   {/* Background Image */}
  <motion.img
-  src="https://images.unsplash.com/photo-1627894483216-2138af692e32?q=80&w=1974&auto=format&fit=crop"
+  src="kashmirboat.jpg"
   className="absolute inset-0 w-full h-full object-cover object-center"
   style={{
   scale: imageScale,
