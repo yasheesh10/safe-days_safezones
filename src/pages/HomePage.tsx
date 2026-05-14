@@ -6,6 +6,7 @@ import MagneticButton from "@/components/MagneticButton";
 import TiltCard from "@/components/TiltCard";
 import { Capacitor } from "@capacitor/core";
 import heroVideo from "@/assets/hero-video.mp4";
+import indiaProtectedBg from "@/assets/india-protected.jpg";
 import { createClient } from "@supabase/supabase-js";
 import {
   motion,
@@ -759,7 +760,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
 
   {/* Background Image */}
  <motion.img
-  src="kashmirboat.jpg"
+  src={indiaProtectedBg}
   className="absolute inset-0 w-full h-full object-cover object-center"
   style={{
   scale: imageScale,
@@ -1214,7 +1215,7 @@ pointer-events-none
 
       {/* AI Chatbot */}
       {chatOpen && (
-  <div className="fixed bottom-20 right-4 w-80 h-96 bg-slate-900/90 border border-white/10 rounded-xl backdrop-blur-md shadow-[0_0_24px_rgba(0,0,0,0.4)] z-50 flex flex-col">
+  <div className="fixed bottom-24 right-4 w-80 h-96 bg-slate-900/90 border border-white/10 rounded-xl backdrop-blur-md shadow-[0_0_24px_rgba(0,0,0,0.4)] z-[9999] flex flex-col">
     {/* Header */}
     <div className="p-4 border-b border-white/10 flex items-center justify-between">
       <h3 className="font-semibold"> {t("chatTitle")}</h3>
@@ -1347,7 +1348,7 @@ pointer-events-none
 
       {/* Floating Chat Toggle */}
       <Button
-        className={`fixed bottom-24 right-4 rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-500 shadow-2xl shadow-blue-600/40 ring-1 ring-blue-300/40 ${focusRing}`}
+        className={`fixed bottom-6 right-4 z-[9999] rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-500 shadow-2xl shadow-blue-600/40 ring-1 ring-blue-300/40 ${focusRing}`}
         onClick={() => setChatOpen(!chatOpen)}
       >
         <MessageCircle className="h-6 w-6 text-white" />
