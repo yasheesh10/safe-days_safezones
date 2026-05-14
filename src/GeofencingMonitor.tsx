@@ -364,7 +364,7 @@ console.log("✅ Component reached render");
 
 
 return (
-  <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
+  <Card className="bg-slate-900/90 border border-cyan-500/20 text-white backdrop-blur-xl shadow-xl rounded-2xl overflow-hidden">
     <CardHeader>
       <CardTitle className="flex items-center gap-2">
         <Shield className="h-5 w-5 text-primary" />
